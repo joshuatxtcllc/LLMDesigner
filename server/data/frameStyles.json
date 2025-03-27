@@ -1,0 +1,176 @@
+{
+  "styles": [
+    {
+      "id": "traditional",
+      "name": "Traditional",
+      "description": "Classical, ornate, and timeless framing styles",
+      "variants": [
+        {
+          "id": "ornate-gold",
+          "name": "Ornate Gold",
+          "description": "Decorative gold-finished frame with intricate patterns",
+          "suitableFor": ["oil paintings", "classical art", "portraits", "religious art", "antique prints"],
+          "costTier": "premium",
+          "conservationRating": "good",
+          "finishes": ["gold leaf", "antique gold", "burnished gold"]
+        },
+        {
+          "id": "scoop-wood",
+          "name": "Scoop Wood",
+          "description": "Classical wooden frame with a curved profile",
+          "suitableFor": ["landscapes", "still life", "watercolors", "traditional paintings"],
+          "costTier": "mid-range",
+          "conservationRating": "excellent",
+          "finishes": ["cherry", "mahogany", "walnut", "black", "gold"]
+        },
+        {
+          "id": "carved-wood",
+          "name": "Carved Wood",
+          "description": "Hand-carved wooden frame with decorative elements",
+          "suitableFor": ["fine art", "oil paintings", "museum-quality pieces"],
+          "costTier": "premium",
+          "conservationRating": "excellent",
+          "finishes": ["dark walnut", "mahogany", "gold accents"]
+        },
+        {
+          "id": "burl-wood",
+          "name": "Burl Wood",
+          "description": "Frame showcasing the natural grain and texture of burl wood",
+          "suitableFor": ["classic art", "formal portraits", "traditional landscapes"],
+          "costTier": "premium",
+          "conservationRating": "good",
+          "finishes": ["natural", "lacquered", "polished"]
+        }
+      ]
+    },
+    {
+      "id": "contemporary",
+      "name": "Contemporary",
+      "description": "Modern, clean, and minimalist framing styles",
+      "variants": [
+        {
+          "id": "metal-section",
+          "name": "Metal Section",
+          "description": "Sleek, modern metal frame with a clean profile",
+          "suitableFor": ["modern art", "photography", "abstract works", "geometric art"],
+          "costTier": "mid-range",
+          "conservationRating": "excellent",
+          "finishes": ["matte black", "brushed silver", "polished chrome", "bronze"]
+        },
+        {
+          "id": "floating",
+          "name": "Floating Frame",
+          "description": "Creates the illusion of artwork floating within the frame",
+          "suitableFor": ["canvas art", "panel paintings", "contemporary art", "gallery displays"],
+          "costTier": "premium",
+          "conservationRating": "excellent",
+          "finishes": ["black", "white", "natural wood", "walnut"]
+        },
+        {
+          "id": "box-frame",
+          "name": "Box Frame",
+          "description": "Deep, three-dimensional frame that creates space around artwork",
+          "suitableFor": ["3D objects", "shadowboxes", "memorabilia", "textiles"],
+          "costTier": "premium",
+          "conservationRating": "excellent",
+          "finishes": ["black", "white", "natural wood"]
+        },
+        {
+          "id": "acrylic",
+          "name": "Acrylic Frame",
+          "description": "Minimalist transparent or colored acrylic frame",
+          "suitableFor": ["modern photography", "digital prints", "contemporary art"],
+          "costTier": "premium",
+          "conservationRating": "good",
+          "finishes": ["clear", "frosted", "black", "colored"]
+        }
+      ]
+    },
+    {
+      "id": "budget",
+      "name": "Budget-Friendly",
+      "description": "Affordable yet attractive framing options",
+      "variants": [
+        {
+          "id": "simple-wood",
+          "name": "Simple Wood",
+          "description": "Clean-lined wooden frame with minimal detailing",
+          "suitableFor": ["general artwork", "casual displays", "office art"],
+          "costTier": "economy",
+          "conservationRating": "good",
+          "finishes": ["black", "white", "natural", "walnut", "maple"]
+        },
+        {
+          "id": "metal-poster",
+          "name": "Metal Poster Frame",
+          "description": "Basic metal frame with clean lines",
+          "suitableFor": ["posters", "prints", "photography", "certificates"],
+          "costTier": "economy",
+          "conservationRating": "good",
+          "finishes": ["black", "silver", "gold", "white"]
+        },
+        {
+          "id": "ready-made",
+          "name": "Ready-Made Frame",
+          "description": "Pre-assembled frame in standard sizes",
+          "suitableFor": ["standard size prints", "posters", "casual artwork"],
+          "costTier": "economy",
+          "conservationRating": "fair",
+          "finishes": ["various"]
+        },
+        {
+          "id": "gallery-wrap",
+          "name": "Gallery Wrap (No Frame)",
+          "description": "Canvas stretched over wooden stretcher bars (frameless)",
+          "suitableFor": ["canvas paintings", "modern art", "casual displays"],
+          "costTier": "economy",
+          "conservationRating": "fair",
+          "finishes": ["not applicable"]
+        }
+      ]
+    },
+    {
+      "id": "specialized",
+      "name": "Specialized",
+      "description": "Unique framing solutions for specific artwork types",
+      "variants": [
+        {
+          "id": "conservation",
+          "name": "Conservation Frame",
+          "description": "Archival-quality framing with museum-grade materials",
+          "suitableFor": ["valuable art", "historical documents", "fine art", "heirlooms"],
+          "costTier": "premium-plus",
+          "conservationRating": "museum-grade",
+          "finishes": ["various"]
+        },
+        {
+          "id": "shadowbox",
+          "name": "Shadowbox",
+          "description": "Deep frame designed to display three-dimensional objects",
+          "suitableFor": ["memorabilia", "objects", "textiles", "medals", "collectibles"],
+          "costTier": "premium",
+          "conservationRating": "excellent",
+          "finishes": ["various"]
+        },
+        {
+          "id": "sports-jersey",
+          "name": "Sports Jersey Frame",
+          "description": "Specialized frame for displaying sports jerseys and memorabilia",
+          "suitableFor": ["sports jerseys", "signed memorabilia", "collectibles"],
+          "costTier": "premium",
+          "conservationRating": "good",
+          "finishes": ["various"]
+        },
+        {
+          "id": "panoramic",
+          "name": "Panoramic Frame",
+          "description": "Extra-wide frame for panoramic photographs or artworks",
+          "suitableFor": ["panoramic photos", "wide landscape art", "wide format prints"],
+          "costTier": "premium",
+          "conservationRating": "good",
+          "finishes": ["various"]
+        }
+      ]
+    }
+  ]
+}
