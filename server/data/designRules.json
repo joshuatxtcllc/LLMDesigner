@@ -1,0 +1,111 @@
+{
+  "generalPrinciples": [
+    {
+      "id": "proportion",
+      "name": "Proportion & Scale",
+      "description": "The relationship between the artwork, mat, and frame dimensions",
+      "guidelines": [
+        "Matting should generally be proportional to the artwork size",
+        "Larger artwork typically requires wider matting",
+        "Small artwork benefits from wider matting to increase presence",
+        "Standard mat width ratio is 1:3:2 (top/sides:bottom for weighted mats)",
+        "Frame molding should be proportional to artwork and mat size"
+      ],
+      "commonErrors": [
+        "Matting too narrow for the artwork, creating a cramped appearance",
+        "Frame molding too heavy for delicate artwork",
+        "Frame molding too thin for substantial artwork",
+        "Unintentionally asymmetrical matting"
+      ]
+    },
+    {
+      "id": "color-harmony",
+      "name": "Color Harmony",
+      "description": "The coordinated use of colors across artwork, mat, and frame",
+      "guidelines": [
+        "Mats should complement, not compete with, the artwork",
+        "Extract mat colors from secondary or tertiary elements in the artwork",
+        "Neutral mats (white, off-white, black) work with most artwork",
+        "Frame finishes should harmonize with the overall color scheme",
+        "Consider the wall color where the framed piece will hang"
+      ],
+      "commonErrors": [
+        "Choosing a mat color that matches the dominant color in the artwork",
+        "Using colors that clash with the artwork's palette",
+        "Selecting frame finishes that conflict with the artwork's tone",
+        "Creating too many competing colors in one framing design"
+      ]
+    },
+    {
+      "id": "conservation",
+      "name": "Conservation Standards",
+      "description": "Preservation techniques to protect artwork from damage",
+      "guidelines": [
+        "Use acid-free, lignin-free materials for all valuable artwork",
+        "UV-protective glazing for light-sensitive pieces",
+        "Proper mounting techniques that avoid permanent adhesives",
+        "Spacers to prevent artwork from touching glazing",
+        "Sealed backing to protect from dust and pollutants"
+      ],
+      "commonErrors": [
+        "Using non-archival materials for valuable artwork",
+        "Direct contact between artwork and glazing",
+        "Improper mounting techniques that damage artwork",
+        "Insufficient protection against environmental factors"
+      ]
+    },
+    {
+      "id": "visual-balance",
+      "name": "Visual Balance",
+      "description": "Creating equilibrium in the framed presentation",
+      "guidelines": [
+        "Consider visual weight of frame elements",
+        "Create intentional symmetry or asymmetry",
+        "Use weighted bottom mats for traditional presentations",
+        "Ensure frame style complements the artwork's composition",
+        "Mat width should balance artwork and frame"
+      ],
+      "commonErrors": [
+        "Visually top-heavy arrangements",
+        "Unintentional visual imbalance",
+        "Matting that creates optical illusions",
+        "Frame style that competes with the artwork's composition"
+      ]
+    }
+  ],
+  "artTypeRules": [
+    {
+      "type": "oil-painting",
+      "name": "Oil Paintings",
+      "framingGuidelines": {
+        "recommended": [
+          "Ornate gold frames for traditional/classical subjects",
+          "Floater frames for contemporary/abstract subjects",
+          "Simple wood frames for landscapes and casual subjects",
+          "Linen liners instead of mats for traditional presentations"
+        ],
+        "matting": "Often displayed without mats, or with linen liners",
+        "glazing": "Usually framed without glass to avoid moisture issues",
+        "mounting": "Stretched canvas can be secured directly in frame",
+        "conservation": "Avoid direct contact between canvas and frame with frame bumpers"
+      }
+    },
+    {
+      "type": "watercolor",
+      "name": "Watercolors",
+      "framingGuidelines": {
+        "recommended": [
+          "Delicate, light frames that complement the medium's subtlety",
+          "Traditional gold or silver frames for formal subjects",
+          "Simple wood frames for casual or naturalistic subjects",
+          "Conservation framing due to sensitivity to light and humidity"
+        ],
+        "matting": "Double or triple matting with white or off-white top mat",
+        "glazing": "UV-protective glass or acrylic recommended",
+        "mounting": "Archival hinging with Japanese paper and wheat starch paste",
+        "conservation": "Full conservation package recommended due to sensitivity"
+      }
+    },
+    {
+      "type": "photography",
+      "name
