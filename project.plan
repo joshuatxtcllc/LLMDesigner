@@ -1,0 +1,154 @@
+# Jay's Frames Expert - Custom Framing AI Assistant
+
+## Project Overview
+Build an AI-powered custom framing design assistant that leverages your 25 years of expertise to help clients select optimal framing solutions for their artwork. This application will use image recognition capabilities to analyze artwork and provide professional framing recommendations.
+
+## Core Technology Stack
+- **Frontend**: React.js with Tailwind CSS
+- **Backend**: Node.js with Express
+- **AI Integration**: OpenAI API (GPT-4 Vision capabilities)
+- **Deployment**: Replit → GitHub → Netlify
+
+## Key Features
+
+### 1. Artwork Analysis System
+- Upload artwork images for analysis
+- Extract key visual elements:
+  - Primary and secondary colors
+  - Subject matter and style
+  - Medium and texture
+  - Dimensions and proportions
+- Generate detailed artwork profile
+
+### 2. Framing Knowledge Base
+- Create structured database of your framing expertise:
+  - Frame styles and materials
+  - Mat options and color combinations
+  - Glass/glazing options
+  - Conservation considerations
+  - Design principles for different art styles
+- Document "decision trees" that capture your expert decision-making process
+
+### 3. Recommendation Engine
+- Generate custom framing solutions based on:
+  - Artwork analysis
+  - Your established design principles
+  - Client preferences and budget
+- Present multiple options with visualization
+
+### 4. Client Interface
+- User-friendly web application
+- Artwork upload and questionnaire
+- Interactive design consultation
+- Visualization of framing recommendations
+- Pricing calculator
+- Appointment scheduling
+
+## Implementation Plan
+
+### Phase 1: Knowledge Capture
+1. Document your framing expertise in a structured format
+2. Build a comprehensive database of framing options and rules
+3. Create decision trees that mimic your expert decision-making process
+
+### Phase 2: Core Application Development
+1. Set up Replit project with React/Node structure
+2. Build artwork upload and analysis system
+3. Implement basic recommendation engine
+4. Create simple client interface
+
+### Phase 3: AI Integration
+1. Connect OpenAI GPT-4 Vision API 
+2. Train custom model with your specific framing knowledge
+3. Implement visual analysis capabilities
+4. Develop advanced recommendation algorithms
+
+### Phase 4: Refinement and Deployment
+1. Test with real artwork and clients
+2. Refine recommendations based on feedback
+3. Optimize user experience
+4. Deploy via GitHub to Netlify
+
+## Technical Implementation Details
+
+### Replit Project Setup
+- Create a new Replit project using the Node.js + React template
+- Configure environment for API keys and dependencies
+- Set up GitHub integration for version control
+
+### Image Recognition Implementation
+- Utilize GPT-4 Vision capabilities for artwork analysis
+- Extract visual information: colors, style, medium, etc.
+- Implement specialized prompts to guide the AI
+
+### Custom Knowledge Integration
+- Create detailed JSON schemas to structure your framing expertise
+- Build prompt templates that incorporate your decision-making process
+- Implement a feedback loop for continuous learning
+
+### Sample Replit Code Structure
+
+```
+/src
+  /frontend
+    /components
+      ArtworkUpload.jsx
+      FramingOptions.jsx
+      Visualizer.jsx
+      RecommendationList.jsx
+    /pages
+      Home.jsx
+      Consultation.jsx
+      Results.jsx
+  /backend
+    /routes
+      artwork.js
+      recommendations.js
+    /services
+      openai.js
+      knowledgeBase.js
+    /models
+      artwork.js
+      framing.js
+  /data
+    frameStyles.json
+    matOptions.json
+    designRules.json
+```
+
+## GPT Integration
+
+The system will use a carefully crafted prompt to guide GPT-4 Vision in analyzing uploaded artwork and generating framing recommendations. Here's a sample prompt template:
+
+```
+You are Jay's Frames Expert, a custom framing design assistant with 25 years of professional framing experience. You're analyzing an uploaded artwork to provide expert framing recommendations.
+
+ARTWORK ANALYSIS:
+- Identify the primary medium and style
+- Extract the dominant and accent colors (provide color codes)
+- Analyze the subject matter and mood
+- Note any special considerations (age, fragility, value)
+
+FRAMING RECOMMENDATIONS:
+Based on your analysis and Jay's expertise, recommend:
+1. Frame style and material that complements the artwork
+2. Mat options (colors, thickness, number of mats)
+3. Glass/glazing type considering preservation needs
+4. Any special mounting techniques required
+
+Provide 2-3 different framing approaches, including:
+- Traditional/conservative option
+- Contemporary/creative option
+- Budget-conscious option (if applicable)
+
+For each recommendation, explain the design rationale using your expertise.
+```
+
+## Deployment Workflow
+1. Develop locally in Replit
+2. Push code to GitHub repository
+3. Connect GitHub repo to Netlify
+4. Configure build settings for automatic deployment
+5. Set up environment variables for API keys
+
+This comprehensive approach will create a valuable tool that captures your expertise while providing practical framing guidance to clients.
