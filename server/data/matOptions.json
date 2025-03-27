@@ -1,0 +1,43 @@
+{
+  "materials": [
+    {
+      "id": "standard",
+      "name": "Standard Mat Board",
+      "description": "Alpha cellulose paper-based matting material",
+      "archivalRating": "fair",
+      "costTier": "economy",
+      "lifespan": "5-10 years",
+      "benefits": ["Affordable", "Wide color selection", "Easy to cut"],
+      "drawbacks": ["Acid content can harm artwork over time", "May discolor with age", "Not suitable for valuable pieces"],
+      "recommendedUse": "Short-term display of less valuable artwork, decorative purposes, temporary framing"
+    },
+    {
+      "id": "conservation",
+      "name": "Conservation Mat Board",
+      "description": "Acid-free, lignin-free cotton or alpha cellulose matting",
+      "archivalRating": "good",
+      "costTier": "mid-range",
+      "lifespan": "15-25 years",
+      "benefits": ["Acid-free", "Fade resistant", "Good for most artwork"],
+      "drawbacks": ["Higher cost than standard mats", "Limited color selection compared to standard"],
+      "recommendedUse": "Long-term display of moderately valuable artwork, photographs, limited editions, signed pieces"
+    },
+    {
+      "id": "museum",
+      "name": "Museum Mat Board",
+      "description": "100% cotton rag, archival quality matting",
+      "archivalRating": "excellent",
+      "costTier": "premium",
+      "lifespan": "50+ years",
+      "benefits": ["Highest conservation standard", "100% cotton core and facing paper", "pH neutral or alkaline buffered"],
+      "drawbacks": ["Most expensive option", "Limited color selection", "Overkill for casual display items"],
+      "recommendedUse": "Valuable artwork, museum pieces, historical documents, heirlooms, investment-grade art"
+    },
+    {
+      "id": "fabric",
+      "name": "Fabric Mat",
+      "description": "Mat board covered with fabric, usually linen or silk",
+      "archivalRating": "varies",
+      "costTier": "premium",
+      "lifespan": "Depends on fabric and backing quality",
+      "benefits": ["Elegant, luxurious appearance", "Unique texture", "Designer aesthetic"],
