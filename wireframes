@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700">
+  <!-- Background -->
+  <rect width="900" height="700" fill="#f8fafc" />
+  
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" font-family="Arial" font-size="24" font-weight="bold" fill="#334155">Jay's Frames Expert - Wireframes</text>
+  
+  <!-- Home Page Wireframe -->
+  <rect x="50" y="70" width="350" height="280" fill="#ffffff" stroke="#94a3b8" stroke-width="2" rx="5" />
+  <text x="225" y="90" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="#334155">Home Page</text>
+  
+  <!-- Header -->
+  <rect x="60" y="100" width="330" height="40" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" />
+  <text x="225" y="125" text-anchor="middle" font-family="Arial" font-size="14" fill="#334155">Jay's Frames Expert</text>
+  
+  <!-- Hero Section -->
+  <rect x="60" y="150" width="330" height="100" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
+  <text x="225" y="190" text-anchor="middle" font-family="Arial" font-size="14" fill="#334155">Custom Framing AI Assistant</text>
+  <rect x="150" y="210" width="150" height="30" fill="#3b82f6" rx="5" />
+  <text x="225" y="230" text-anchor="middle" font-family="Arial" font-size="14" fill="#ffffff">Upload Artwork</text>
+  
+  <!-- Features Section -->
+  <rect x="60" y="260" width="100" height="80" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
+  <rect x="170" y="260" width="100" height="80" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
+  <rect x="280" y="260" width="100" height="80" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
+  
+  <!-- Upload Page Wireframe -->
+  <rect x="50" y="380" width="350" height="280" fill="#ffffff" stroke="#94a3b8" stroke-width="2" rx="5" />
+  <text x="225" y="400" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="#334155">Upload & Analyze Page</text>
+  
+  <!-- Header -->
+  <rect x="60" y="410" width="330" height="40" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" />
+  
+  <!-- Upload Area -->
+  <rect x="90" y="460" width="270" height="120" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" rx="5" stroke-dasharray="5,5" />
+  <text x="225" y="520" text-anchor="middle" font-family="Arial" font-size="14" fill="#64748b">Drag & Drop Artwork Here</text>
+  
+  <!-- Form Fields -->
+  <rect x="90" y="590" width="270" height="30" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
+  <rect x="90" y="630" width="190" height="30" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
+  <rect x="290" y="630" width="70" height="30" fill="#3b82f6" rx="5" />
+  <text x="325" y="650" text-anchor="middle" font-family="Arial" font-size="12" fill="#ffffff">Submit</text>
+  
+  <!-- Results Page Wireframe -->
+  <rect x="450" y="70" width="400" height="590" fill="#ffffff" stroke="#94a3b8" stroke-width="2" rx="5" />
+  <text x="650" y="90" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="#334155">Results Page</text>
+  
+  <!-- Header -->
+  <rect x="460" y="100" width="380" height="40" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" />
+  
+  <!-- Image and Analysis -->
+  <rect x="470" y="150" width="160" height="160" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
+  <rect x="640" y="150" width="190" height="160" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+  <text x="735" y="170" text-anchor="middle" font-family="Arial" font-size="14" fill="#334155">Analysis</text>
+  <line x1="650" y1="190" x2="820" y2="190" stroke="#cbd5e1" stroke-width="1" />
+  <line x1="650" y1="220" x2="820" y2="220" stroke="#cbd5e1" stroke-width="1" />
+  <line x1="650" y1="250" x2="820" y2="250" stroke="#cbd5e1" stroke-width="1" />
+  <line x1="650" y1="280" x2="820" y2="280" stroke="#cbd5e1" stroke-width="1" />
+  
+  <!-- Recommendations -->
+  <text x="650" y="330" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#334155">Framing Recommendations</text>
+  
+  <!-- Option 1 -->
+  <rect x="470" y="350" width="360" height="80" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" rx="5" />
+  <rect x="480" y="360" width="60" height="60" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" />
+  <text x="605" y="380" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#334155">Traditional Option</text>
+  <text x="605" y="410" text-anchor="middle" font-family="Arial" font-size="12" fill="#475569">Gold frame with cream double mat</text>
+  
+  <!-- Option 2 -->
+  <rect x="470" y="440" width="360" height="80" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" rx="5" />
+  <rect x="480" y="450" width="60" height="60" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" />
+  <text x="605" y="470" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#334155">Contemporary Option</text>
+  <text x="605" y="500" text-anchor="middle" font-family="Arial" font-size="12" fill="#475569">Floating frame with black spacer</text>
+  
+  <!-- Option 3 -->
+  <rect x="470" y="530" width="360" height="80" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" rx="5" />
+  <rect x="480" y="540" width="60" height="60" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" />
+  <text x="605" y="560" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#334155">Budget Option</text>
+  <text x="605" y="590" text-anchor="middle" font-family="Arial" font-size="12" fill="#475569">Simple black frame with single mat</text>
+  
+  <!-- Action Buttons -->
+  <rect x="520" y="620" width="120" height="30" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" rx="5" />
+  <text x="580" y="640" text-anchor="middle" font-family="Arial" font-size="12" fill="#334155">Visualize</text>
+  
+  <rect x="660" y="620" width="120" height="30" fill="#3b82f6" rx="5" />
+  <text x="720" y="640" text-anchor="middle" font-family="Arial" font-size="12" fill="#ffffff">Get Quote</text>
+</svg>
