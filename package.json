@@ -1,11 +1,14 @@
+
 {
-  "name": "workspace",
+  "name": "jays-frames-expert",
   "version": "1.0.0",
-  "description": "This document provides instructions for setting up the Jay's Frames Expert project on Replit, a cloud-based development environment.",
-  "main": "server.js",
+  "description": "AI-powered custom framing design assistant",
+  "main": "server/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "client": "cd client && npm start",
+    "dev:all": "concurrently \"npm run dev\" \"npm run client\""
   },
   "keywords": [],
   "author": "",
