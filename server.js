@@ -31,11 +31,19 @@ const fs = require('fs');
 if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
+if (!fs.existsSync('uploads/recordings')) {
+  fs.mkdirSync('uploads/recordings');
+}
 
 // Configure file upload
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    // Use different directories based on file type
+    if (file.fieldname === 'recording') {
+      cb(null, 'uploads/recordings/');
+    } else {
+      cb(null, 'uploads/');
+    }
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
@@ -149,6 +157,46 @@ app.post('/api/contact', express.json(), async (req, res) => {
     console.error('Error submitting contact form:', error);
     res.status(500).json({ 
       error: 'Failed to submit contact form', 
+      details: error.message 
+    });
+  }
+});
+
+/**
+ * Upload recording of design process
+ * POST /api/upload-recording
+ */
+app.post('/api/upload-recording', upload.single('recording'), async (req, res) => {
+  try {
+    // Check if file exists
+    if (!req.file) {
+      return res.status(400).json({ error: 'No recording uploaded' });
+    }
+
+    // Get the uploaded file path
+    const recordingPath = path.join(__dirname, req.file.path);
+    
+    // In a production environment, you would:
+    // 1. Store the recording metadata in a database
+    // 2. Process it for AI training
+    // 3. Potentially move it to cloud storage
+    
+    console.log('Recording received:', req.file.filename);
+    
+    // Return success response with recording details
+    res.json({ 
+      success: true, 
+      message: 'Recording uploaded successfully',
+      recording: {
+        filename: req.file.filename,
+        size: req.file.size,
+        path: req.file.path
+      }
+    });
+  } catch (error) {
+    console.error('Error uploading recording:', error);
+    res.status(500).json({ 
+      error: 'Failed to upload recording', 
       details: error.message 
     });
   }

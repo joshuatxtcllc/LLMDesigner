@@ -20,6 +20,7 @@
                 <a href="#" class="text-gray-700 hover:text-indigo-600">Home</a>
                 <a href="#how-it-works" class="text-gray-700 hover:text-indigo-600">How It Works</a>
                 <a href="#about" class="text-gray-700 hover:text-indigo-600">About</a>
+                <a href="#recording" class="text-gray-700 hover:text-indigo-600">Recording</a>
                 <a href="#contact" class="text-gray-700 hover:text-indigo-600">Contact</a>
             </div>
             <div class="md:hidden">
@@ -295,3 +296,69 @@
     <script src="app.js"></script>
 </body>
 </html>
+
+        <!-- Recording Section -->
+        <section id="recording" class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-8">Record Your Design Process</h2>
+                <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12">Connect your phone or webcam via Bluetooth to record your design process. This helps our AI learn from your expertise.</p>
+
+                <div class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md">
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold mb-4">Bluetooth Device Connection</h3>
+                        <p class="text-gray-600 mb-4">Connect your Bluetooth-enabled camera or smartphone to record your framing design process.</p>
+                        <button id="bluetooth-connect" class="btn-primary w-full mb-4">Connect Bluetooth Device</button>
+                        <div id="device-info" class="hidden">
+                            <div class="p-4 bg-blue-50 rounded-md">
+                                <div class="flex items-center">
+                                    <div class="mr-3 text-blue-500">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Connected Device: <span id="device-name">None</span></p>
+                                        <p class="text-sm text-gray-600">Status: <span id="connection-status">Not connected</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recording-controls hidden mb-6" id="recording-controls">
+                        <h3 class="text-xl font-semibold mb-4">Recording Controls</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button id="start-recording" class="btn-secondary">
+                                <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Start Recording
+                            </button>
+                            <button id="stop-recording" class="btn-danger" disabled>
+                                <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path>
+                                </svg>
+                                Stop Recording
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="preview-stream" class="hidden">
+                        <h3 class="text-xl font-semibold mb-4">Camera Preview</h3>
+                        <div class="relative pt-[56.25%] bg-gray-100 rounded overflow-hidden">
+                            <video id="camera-preview" class="absolute top-0 left-0 w-full h-full object-cover" autoplay></video>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">Live preview of your connected camera</p>
+                    </div>
+
+                    <div id="recording-list" class="hidden mt-6">
+                        <h3 class="text-xl font-semibold mb-4">Saved Recordings</h3>
+                        <ul class="divide-y divide-gray-200" id="recordings-container">
+                            <!-- Recording items will be added here dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
