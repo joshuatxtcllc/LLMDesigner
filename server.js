@@ -10,7 +10,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const dotenv = require('dotenv');
-const { Configuration, OpenAIApi } = require('openai');
+const OpenAI = require('openai');
 
 // Load environment variables
 dotenv.config();
@@ -47,10 +47,9 @@ const upload = multer({
 });
 
 // Configure OpenAI
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
 // API Routes
 
@@ -77,7 +76,7 @@ app.post('/api/analyze', upload.single('artwork'), async (req, res) => {
     const systemPrompt = require('./data/systemPrompt.json').prompt;
 
     // Call OpenAI API for artwork analysis and recommendations
-    const response = await openai.createChatCompletion({
+    const response = await openai.chat.completions.create({
       model: "gpt-4-vision-preview",
       messages: [
         {
@@ -110,7 +109,7 @@ app.post('/api/analyze', upload.single('artwork'), async (req, res) => {
     });
 
     // Process and structure the OpenAI response
-    const framingRecommendations = processOpenAIResponse(response.data.choices[0].message.content);
+    const framingRecommendations = processOpenAIResponse(response.choices[0].message.content);
 
     // Delete the uploaded file to save space
     require('fs').unlinkSync(imagePath);
