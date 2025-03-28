@@ -19,7 +19,43 @@ dotenv.config();
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+let supabase;
+
+try {
+  if (supabaseUrl && supabaseKey && 
+      supabaseUrl !== 'your_supabase_url' && 
+      supabaseKey !== 'your_supabase_anon_key' &&
+      supabaseUrl.startsWith('https://')) {
+    supabase = createClient(supabaseUrl, supabaseKey);
+    console.log('Supabase client initialized successfully');
+  } else {
+    console.warn('Missing or invalid Supabase credentials. Some features will be disabled.');
+    // Create a mock supabase client with no-op methods
+    supabase = {
+      from: () => ({ 
+        select: () => ({ 
+          eq: () => ({ 
+            single: () => Promise.resolve({ data: null, error: 'No Supabase connection' }) 
+          }) 
+        }),
+        insert: () => Promise.resolve({ data: null, error: 'No Supabase connection' })
+      })
+    };
+  }
+} catch (error) {
+  console.error('Failed to initialize Supabase client:', error);
+  // Create a mock supabase client
+  supabase = {
+    from: () => ({ 
+      select: () => ({ 
+        eq: () => ({ 
+          single: () => Promise.resolve({ data: null, error: 'No Supabase connection' }) 
+        }) 
+      }),
+      insert: () => Promise.resolve({ data: null, error: 'No Supabase connection' })
+    })
+  };
+}
 
 // Set up Express app
 const app = express();
