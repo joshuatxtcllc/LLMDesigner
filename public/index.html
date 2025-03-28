@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jay's Frames Expert</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            background-color: #f9f9f9;
+        }
+        .endpoints {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jay's Frames Expert API</h1>
+    
+    <div class="card">
+        <h2>Welcome to Jay's Frames Expert</h2>
+        <p>This is the API server for the Jay's Frames Expert application, an AI-powered custom framing design assistant.</p>
+    </div>
+    
+    <div class="card">
+        <h2>Available Endpoints:</h2>
+        <div class="endpoints">
+            <p><strong>POST /api/analyze</strong> - Analyze artwork and get framing recommendations</p>
+            <p><strong>POST /api/contact</strong> - Submit contact form information</p>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>How to Use</h2>
+        <p>The API accepts artwork images for analysis. Send a POST request to <code>/api/analyze</code> with an image file and optional metadata to receive custom framing recommendations.</p>
+    </div>
+</body>
+</html>

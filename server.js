@@ -23,7 +23,8 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use(express.static(path.join(__dirname, '../client/build')));
+app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'client/build')));
 
 // Configure file upload
 const storage = multer.diskStorage({
@@ -147,10 +148,15 @@ app.post('/api/contact', express.json(), async (req, res) => {
   }
 });
 
+// Root route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
+});
+
 // Serve React app in production
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+    res.sendFile(path.join(__dirname, 'client/build/index.html'));
   });
 }
 
