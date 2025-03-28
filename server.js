@@ -11,9 +11,15 @@ const multer = require('multer');
 const path = require('path');
 const dotenv = require('dotenv');
 const OpenAI = require('openai');
+const { createClient } = require('@supabase/supabase-js');
 
 // Load environment variables
 dotenv.config();
+
+// Initialize Supabase client
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Set up Express app
 const app = express();
@@ -61,10 +67,47 @@ const upload = multer({
   }
 });
 
-// Configure OpenAI
+// Configure OpenAI with key from Supabase
+let openaiApiKey = process.env.OPENAI_API_KEY; // Fallback to env var
+
+// Function to get OpenAI API key from Supabase
+async function getOpenAIKey() {
+  try {
+    const { data, error } = await supabase
+      .from('api_keys')
+      .select('key_value')
+      .eq('key_name', 'openai')
+      .single();
+    
+    if (error) throw error;
+    if (data && data.key_value) {
+      return data.key_value;
+    }
+    return process.env.OPENAI_API_KEY; // Fallback
+  } catch (error) {
+    console.error('Error fetching OpenAI key from Supabase:', error);
+    return process.env.OPENAI_API_KEY; // Fallback
+  }
+}
+
+// Initialize OpenAI with fallback key for now
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: openaiApiKey,
 });
+
+// Update OpenAI key on startup
+(async function() {
+  try {
+    const key = await getOpenAIKey();
+    if (key) {
+      openaiApiKey = key;
+      openai.apiKey = key;
+      console.log('OpenAI API key updated from Supabase');
+    }
+  } catch (error) {
+    console.error('Failed to update OpenAI API key:', error);
+  }
+})();
 
 // API Routes
 
@@ -77,6 +120,18 @@ app.post('/api/analyze', upload.single('artwork'), async (req, res) => {
     // Check if file exists
     if (!req.file) {
       return res.status(400).json({ error: 'No image uploaded' });
+    }
+    
+    // Refresh the OpenAI API key
+    try {
+      const key = await getOpenAIKey();
+      if (key) {
+        openaiApiKey = key;
+        openai.apiKey = key;
+      }
+    } catch (error) {
+      console.error('Failed to refresh OpenAI API key:', error);
+      // Continue with existing key
     }
 
     // Get additional form data
@@ -214,28 +269,46 @@ app.post('/api/training-data', express.json(), async (req, res) => {
       return res.status(400).json({ error: 'Invalid training session data' });
     }
     
-    // Ensure directories exist
+    // Save to local file system as backup
     const trainDataDir = path.join(__dirname, 'data', 'training');
     if (!fs.existsSync(trainDataDir)) {
       fs.mkdirSync(trainDataDir, { recursive: true });
     }
     
-    // Save the training data to a JSON file
     const filename = `session_${trainingSession.id}.json`;
     const filePath = path.join(trainDataDir, filename);
     
     fs.writeFileSync(filePath, JSON.stringify(trainingSession, null, 2));
     
-    console.log('Training data saved:', filename);
+    // Save training data to Supabase
+    const { data, error } = await supabase
+      .from('training_sessions')
+      .insert([
+        {
+          session_id: trainingSession.id,
+          timestamp: trainingSession.timestamp,
+          artwork_data: trainingSession.artworkData,
+          design_choices: trainingSession.designChoices,
+          annotations: trainingSession.annotations,
+          recording_url: trainingSession.recordingUrl
+        }
+      ]);
+    
+    if (error) {
+      console.error('Supabase insert error:', error);
+      // Continue with local processing even if Supabase fails
+    } else {
+      console.log('Training data saved to Supabase');
+    }
     
     // Process the data for AI training
-    // This would be expanded in a production environment
     processTrainingData(trainingSession);
     
     res.json({
       success: true,
       message: 'Training data submitted successfully',
-      sessionId: trainingSession.id
+      sessionId: trainingSession.id,
+      supabaseStatus: error ? 'failed' : 'success'
     });
   } catch (error) {
     console.error('Error processing training data:', error);
@@ -243,6 +316,37 @@ app.post('/api/training-data', express.json(), async (req, res) => {
       error: 'Failed to process training data',
       details: error.message
     });
+  }
+});
+
+/**
+ * Log device events (connections, disconnections, etc.)
+ * POST /api/log-device-event
+ */
+app.post('/api/log-device-event', express.json(), async (req, res) => {
+  try {
+    const { event, deviceName, timestamp } = req.body;
+    
+    // Log to Supabase
+    const { data, error } = await supabase
+      .from('device_events')
+      .insert([
+        {
+          event_type: event,
+          device_name: deviceName,
+          timestamp: timestamp || new Date().toISOString()
+        }
+      ]);
+    
+    if (error) {
+      console.error('Error logging device event to Supabase:', error);
+    }
+    
+    // Always return success to client even if Supabase fails
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error logging device event:', error);
+    res.status(500).json({ error: 'Failed to log device event' });
   }
 });
 

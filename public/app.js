@@ -1,4 +1,3 @@
-
 // DOM Elements
 document.addEventListener('DOMContentLoaded', function() {
     // Bluetooth and Recording Variables
@@ -12,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.getElementById('menu-toggle');
     const mobileMenu = document.createElement('div');
     mobileMenu.classList.add('mobile-menu', 'hidden', 'md:hidden');
-    
+
     if (menuToggle) {
         // Create mobile menu
         const navLinks = document.querySelectorAll('nav a');
@@ -20,43 +19,43 @@ document.addEventListener('DOMContentLoaded', function() {
             .filter(link => !link.parentElement.classList.contains('flex'))
             .map(link => `<a href="${link.getAttribute('href')}" class="block py-2 px-4 hover:bg-gray-100 rounded-md">${link.textContent}</a>`)
             .join('');
-        
+
         document.querySelector('header').appendChild(mobileMenu);
-        
+
         menuToggle.addEventListener('click', function() {
             mobileMenu.classList.toggle('hidden');
         });
     }
-    
+
     // Artwork Upload Functionality
     const fileInput = document.getElementById('artwork-upload');
     const previewContainer = document.getElementById('preview-container');
     const artworkPreview = document.getElementById('artwork-preview');
     const removeButton = document.getElementById('remove-image');
     const uploadArea = document.querySelector('.upload-area');
-    
+
     if (fileInput) {
         // Handle file selection
         fileInput.addEventListener('change', function(e) {
             handleFileSelect(e.target.files[0]);
         });
-        
+
         // Handle drag and drop
         uploadArea.addEventListener('dragover', function(e) {
             e.preventDefault();
             uploadArea.classList.add('active');
         });
-        
+
         uploadArea.addEventListener('dragleave', function() {
             uploadArea.classList.remove('active');
         });
-        
+
         uploadArea.addEventListener('drop', function(e) {
             e.preventDefault();
             uploadArea.classList.remove('active');
             handleFileSelect(e.dataTransfer.files[0]);
         });
-        
+
         // Remove image
         if (removeButton) {
             removeButton.addEventListener('click', function() {
@@ -66,30 +65,30 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
-    
+
     // Handle file selection
     function handleFileSelect(file) {
         if (!file) return;
-        
+
         if (!file.type.match('image.*')) {
             alert('Please select an image file.');
             return;
         }
-        
+
         const reader = new FileReader();
-        
+
         reader.onload = function(e) {
             artworkPreview.src = e.target.result;
             previewContainer.classList.remove('hidden');
             document.querySelector('.upload-label').classList.add('hidden');
         };
-        
+
         reader.readAsDataURL(file);
     }
-    
+
     // Artwork Form Submission
     const artworkForm = document.getElementById('artwork-form');
-    
+
     if (artworkForm) {
         artworkForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -97,10 +96,10 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Form submitted! This would normally send the data to the server for processing.');
         });
     }
-    
+
     // Contact Form Submission
     const contactForm = document.getElementById('contact-form');
-    
+
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -108,28 +107,28 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Thank you for your message! We will get back to you shortly.');
         });
     }
-    
+
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
-            
+
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
                 window.scrollTo({
                     top: target.offsetTop - 80, // Adjust for header height
                     behavior: 'smooth'
                 });
-                
+
                 // Close mobile menu if open
                 mobileMenu.classList.add('hidden');
             }
         });
     });
-    
+
     // Animate elements on scroll
     const animateElements = document.querySelectorAll('.feature-card, .testimonial-card, .section-heading');
-    
+
     // Check if IntersectionObserver is supported
     if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries) => {
@@ -140,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }, { threshold: 0.1 });
-        
+
         animateElements.forEach(el => {
             observer.observe(el);
         });
@@ -150,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
             el.classList.add('animate-fadeIn');
         });
     }
-    
+
     // Bluetooth Connection Functionality
     const bluetoothConnectBtn = document.getElementById('bluetooth-connect');
     const deviceInfo = document.getElementById('device-info');
@@ -163,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const cameraPreview = document.getElementById('camera-preview');
     const recordingList = document.getElementById('recording-list');
     const recordingsContainer = document.getElementById('recordings-container');
-    
+
     if (bluetoothConnectBtn) {
         bluetoothConnectBtn.addEventListener('click', async function() {
             try {
@@ -172,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('Web Bluetooth API is not available in your browser. Please use Chrome or Edge.');
                     return;
                 }
-                
+
                 // Request device with appropriate filters
                 bluetoothDevice = await navigator.bluetooth.requestDevice({
                     filters: [
@@ -185,30 +184,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     ],
                     optionalServices: ['generic_access']
                 });
-                
+
                 // Show device info
                 deviceInfo.classList.remove('hidden');
                 deviceName.textContent = bluetoothDevice.name || 'Unknown Device';
                 connectionStatus.textContent = 'Connected';
-                
+
                 bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
-                
+
                 // Connect to GATT server
                 gattServer = await bluetoothDevice.gatt.connect();
                 console.log('Connected to GATT server');
-                
+
                 // Once connected to Bluetooth, let's use WebRTC for camera access
                 // This simulates connecting to a device's camera
                 await setupCamera();
                 recordingControls.classList.remove('hidden');
-                
+
             } catch (error) {
                 console.error('Bluetooth connection error:', error);
                 alert('Failed to connect to a Bluetooth device: ' + error.message);
             }
         });
     }
-    
+
     async function setupCamera() {
         try {
             // Request camera access
@@ -216,11 +215,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 video: true, 
                 audio: true 
             });
-            
+
             // Display the camera stream
             cameraPreview.srcObject = recordingStream;
             previewStream.classList.remove('hidden');
-            
+
             return true;
         } catch (error) {
             console.error('Error accessing camera:', error);
@@ -228,40 +227,53 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
     }
-    
+
     function onDisconnected() {
         connectionStatus.textContent = 'Disconnected';
         console.log('Bluetooth device disconnected');
-        
+
         // Stop media stream if active
         if (recordingStream) {
             recordingStream.getTracks().forEach(track => track.stop());
             recordingStream = null;
         }
-        
+
+        // Log disconnection event to server/Supabase
+        fetch('/api/log-device-event', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                event: 'disconnected',
+                deviceName: bluetoothDevice ? bluetoothDevice.name : 'Unknown Device',
+                timestamp: new Date().toISOString()
+            })
+        }).catch(error => console.error('Failed to log device event:', error));
+
         // Hide controls
         recordingControls.classList.add('hidden');
         previewStream.classList.add('hidden');
     }
-    
+
     // Training functionality
     const startTrainingBtn = document.getElementById('start-training');
     const stopTrainingBtn = document.getElementById('stop-training');
-    
+
     if (startTrainingBtn) {
         startTrainingBtn.addEventListener('click', function() {
             // Start training session
             window.trainingModule.start();
         });
     }
-    
+
     if (stopTrainingBtn) {
         stopTrainingBtn.addEventListener('click', function() {
             // End training session
             window.trainingModule.end();
         });
     }
-    
+
     // Recording functionality
     if (startRecordingBtn) {
         startRecordingBtn.addEventListener('click', function() {
@@ -269,38 +281,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Camera is not connected. Please connect a device first.');
                 return;
             }
-            
+
             // Initialize MediaRecorder
             recordedChunks = [];
             mediaRecorder = new MediaRecorder(recordingStream, { mimeType: 'video/webm' });
-            
+
             mediaRecorder.addEventListener('dataavailable', function(e) {
                 if (e.data.size > 0) {
                     recordedChunks.push(e.data);
                 }
             });
-            
+
             mediaRecorder.addEventListener('stop', function() {
                 // Create recording blob
                 const recordingBlob = new Blob(recordedChunks, { type: 'video/webm' });
                 const recordingUrl = URL.createObjectURL(recordingBlob);
-                
+
                 // Add recording to list
                 addRecordingToList(recordingUrl);
-                
+
                 // Upload to server
                 uploadRecording(recordingBlob);
-                
+
                 // If training session is active, associate this recording with it
                 if (window.trainingModule && window.trainingModule.isActive) {
                     window.trainingModule.end(recordingUrl);
                 }
-                
+
                 // Reset UI
                 startRecordingBtn.disabled = false;
                 stopRecordingBtn.disabled = true;
             });
-            
+
             // Start recording
             mediaRecorder.start();
             startRecordingBtn.disabled = true;
@@ -308,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Recording started');
         });
     }
-    
+
     if (stopRecordingBtn) {
         stopRecordingBtn.addEventListener('click', function() {
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
@@ -317,17 +329,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     function addRecordingToList(url) {
         // Show the recordings list
         recordingList.classList.remove('hidden');
-        
+
         // Create recording item
         const recordingItem = document.createElement('li');
         recordingItem.className = 'py-4';
-        
+
         const recordingName = `Recording ${recordingCounter++}`;
-        
+
         recordingItem.innerHTML = `
             <div class="flex items-center justify-between">
                 <div>
@@ -352,36 +364,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 <video controls class="w-full rounded" src="${url}"></video>
             </div>
         `;
-        
+
         recordingsContainer.prepend(recordingItem);
-        
+
         // Add event listener for play button
         recordingItem.querySelector('.play-recording').addEventListener('click', function() {
             const preview = recordingItem.querySelector('.recording-preview');
             preview.classList.toggle('hidden');
-            
+
             if (!preview.classList.contains('hidden')) {
                 const video = preview.querySelector('video');
                 video.play();
             }
         });
     }
-    
+
     // Function to upload recording to server
     async function uploadRecording(blob) {
         try {
             const formData = new FormData();
             formData.append('recording', blob, `recording-${Date.now()}.webm`);
-            
+
             const response = await fetch('/api/upload-recording', {
                 method: 'POST',
                 body: formData
             });
-            
+
             if (!response.ok) {
                 throw new Error('Failed to upload recording');
             }
-            
+
             console.log('Recording uploaded successfully');
         } catch (error) {
             console.error('Error uploading recording:', error);
