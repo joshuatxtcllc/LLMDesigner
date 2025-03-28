@@ -9,39 +9,55 @@ body {
 
 /* Button Styles */
 .btn-primary {
-  display: inline-block;
-  background-color: #4f46e5;
+  background-color: #4338ca;
   color: white;
-  font-weight: 600;
   padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  transition: all 0.3s ease;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+  border-radius: 0.375rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .btn-primary:hover {
-  background-color: #4338ca;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 10px rgba(79, 70, 229, 0.3);
+  background-color: #3730a3;
 }
 
 .btn-secondary {
-  display: inline-block;
-  background-color: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
+  background-color: #4b5563;
   color: white;
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  transition: all 0.3s ease;
-  text-align: center;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .btn-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
+  background-color: #374151;
+}
+
+.btn-danger {
+  background-color: #dc2626;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-danger:hover {
+  background-color: #b91c1c;
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Feature Cards */
@@ -189,19 +205,6 @@ label {
     justify-content: center;
 }
 
-.btn-danger {
-    background-color: rgb(239, 68, 68);
-    color: white;
-}
-
-.btn-danger:hover {
-    background-color: rgb(220, 38, 38);
-}
-
-.btn-danger:disabled {
-    background-color: rgb(252, 165, 165);
-    cursor: not-allowed;
-}
 
 #camera-preview {
     background-color: #111;
@@ -239,6 +242,35 @@ label {
 
 .animate-slideUp {
   animation: slideUp 0.5s ease-out;
+}
+
+/* Animation classes */
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Notification styles */
+.notification-item {
+    animation: slideIn 0.3s ease-out forwards;
+}
+
+.notification-item.fade-out {
+    animation: fadeOut 0.3s ease-in forwards;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
 }
 
 /* Contact form improvements */

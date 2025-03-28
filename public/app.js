@@ -244,6 +244,24 @@ document.addEventListener('DOMContentLoaded', function() {
         previewStream.classList.add('hidden');
     }
     
+    // Training functionality
+    const startTrainingBtn = document.getElementById('start-training');
+    const stopTrainingBtn = document.getElementById('stop-training');
+    
+    if (startTrainingBtn) {
+        startTrainingBtn.addEventListener('click', function() {
+            // Start training session
+            window.trainingModule.start();
+        });
+    }
+    
+    if (stopTrainingBtn) {
+        stopTrainingBtn.addEventListener('click', function() {
+            // End training session
+            window.trainingModule.end();
+        });
+    }
+    
     // Recording functionality
     if (startRecordingBtn) {
         startRecordingBtn.addEventListener('click', function() {
@@ -272,6 +290,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Upload to server
                 uploadRecording(recordingBlob);
+                
+                // If training session is active, associate this recording with it
+                if (window.trainingModule && window.trainingModule.isActive) {
+                    window.trainingModule.end(recordingUrl);
+                }
                 
                 // Reset UI
                 startRecordingBtn.disabled = false;

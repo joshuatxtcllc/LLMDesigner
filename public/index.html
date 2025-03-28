@@ -293,10 +293,158 @@
         </div>
     </footer>
 
+    <script src="training.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
 
+        <!-- LLM Training Section -->
+        <section id="training" class="py-16 bg-indigo-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-8">Train Jay's Frames Expert AI</h2>
+                <p class="text-center text-gray-600 max-w-2xl mx-auto mb-8">Record your design process and decisions to teach the AI how you create perfect frame designs.</p>
+                
+                <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mb-8">
+                    <div class="flex items-center justify-between mb-6 border-b pb-4">
+                        <h3 class="text-xl font-semibold">AI Training Interface</h3>
+                        <div class="flex items-center space-x-4">
+                            <span id="training-status" class="px-2 py-1 bg-gray-300 text-gray-700 rounded-full text-xs">Not Recording</span>
+                            <button id="start-training" class="btn-secondary">Start Training Session</button>
+                            <button id="stop-training" class="btn-danger" disabled>Stop Training</button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="design-input-panel">
+                            <h4 class="font-medium mb-3">Design Choices</h4>
+                            <p class="text-sm text-gray-600 mb-4">Make your design choices as you normally would. All selections will be recorded for training.</p>
+                            
+                            <!-- Frame Options -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium mb-1">Frame Style</label>
+                                <select id="frame-style" class="design-choice w-full p-2 border rounded" data-category="frame" data-subcategory="style">
+                                    <option value="">Select a style</option>
+                                    <option value="traditional">Traditional</option>
+                                    <option value="contemporary">Contemporary</option>
+                                    <option value="minimalist">Minimalist</option>
+                                    <option value="ornate">Ornate</option>
+                                    <option value="rustic">Rustic</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium mb-1">Frame Material</label>
+                                <select id="frame-material" class="design-choice w-full p-2 border rounded" data-category="frame" data-subcategory="material">
+                                    <option value="">Select a material</option>
+                                    <option value="wood-maple">Wood - Maple</option>
+                                    <option value="wood-walnut">Wood - Walnut</option>
+                                    <option value="wood-oak">Wood - Oak</option>
+                                    <option value="metal-aluminum">Metal - Aluminum</option>
+                                    <option value="metal-steel">Metal - Steel</option>
+                                    <option value="composite">Composite</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium mb-1">Frame Color</label>
+                                <select id="frame-color" class="design-choice w-full p-2 border rounded" data-category="frame" data-subcategory="color">
+                                    <option value="">Select a color</option>
+                                    <option value="natural">Natural</option>
+                                    <option value="black">Black</option>
+                                    <option value="white">White</option>
+                                    <option value="gold">Gold</option>
+                                    <option value="silver">Silver</option>
+                                    <option value="bronze">Bronze</option>
+                                    <option value="walnut">Walnut</option>
+                                    <option value="cherry">Cherry</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Mat Options -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium mb-1">Mat Configuration</label>
+                                <select id="mat-config" class="design-choice w-full p-2 border rounded" data-category="mat" data-subcategory="configuration">
+                                    <option value="">Select a configuration</option>
+                                    <option value="none">No Mat</option>
+                                    <option value="single">Single Mat</option>
+                                    <option value="double">Double Mat</option>
+                                    <option value="triple">Triple Mat</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium mb-1">Primary Mat Color</label>
+                                <select id="mat-color-primary" class="design-choice w-full p-2 border rounded" data-category="mat" data-subcategory="primary-color">
+                                    <option value="">Select a color</option>
+                                    <option value="white">White</option>
+                                    <option value="off-white">Off-White</option>
+                                    <option value="black">Black</option>
+                                    <option value="gray">Gray</option>
+                                    <option value="blue">Blue</option>
+                                    <option value="green">Green</option>
+                                    <option value="red">Red</option>
+                                    <option value="yellow">Yellow</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Glass Options -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium mb-1">Glass Type</label>
+                                <select id="glass-type" class="design-choice w-full p-2 border rounded" data-category="glass" data-subcategory="type">
+                                    <option value="">Select glass type</option>
+                                    <option value="regular">Regular Glass</option>
+                                    <option value="uv">UV-Protective Glass</option>
+                                    <option value="museum">Museum Glass</option>
+                                    <option value="non-glare">Non-Glare Glass</option>
+                                    <option value="acrylic">Acrylic</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Mounting Options -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium mb-1">Mounting Method</label>
+                                <select id="mounting-method" class="design-choice w-full p-2 border rounded" data-category="mounting" data-subcategory="method">
+                                    <option value="">Select mounting method</option>
+                                    <option value="hinge">Hinge Mounting</option>
+                                    <option value="corner">Corner Mounting</option>
+                                    <option value="float">Float Mounting</option>
+                                    <option value="dry-mount">Dry Mounting</option>
+                                    <option value="adhesive">Adhesive Mounting</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <!-- Annotations/Explanations -->
+                            <div id="annotation-form" class="mb-6 hidden">
+                                <h4 class="font-medium mb-3">Add Design Explanation</h4>
+                                <p class="text-sm text-gray-600 mb-2">Explain your design decisions to help the AI understand your reasoning.</p>
+                                <textarea id="annotation-text" rows="3" class="w-full p-2 border rounded mb-2" placeholder="Explain why you made these design choices..."></textarea>
+                                <button id="add-annotation" class="btn-secondary w-full">Add Explanation</button>
+                            </div>
+                            
+                            <!-- Annotations List -->
+                            <div>
+                                <h4 class="font-medium mb-3">Your Explanations</h4>
+                                <div id="annotations-list" class="border rounded p-3 bg-gray-50 min-h-[200px] max-h-[300px] overflow-y-auto"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notification Area -->
+                <div id="notification-container" class="fixed top-5 right-5 z-50 max-w-md"></div>
+                
+                <!-- Recordings History -->
+                <div class="max-w-4xl mx-auto">
+                    <h3 class="text-xl font-semibold mb-4">Previous Training Sessions</h3>
+                    <div id="training-sessions-list" class="bg-white rounded-lg shadow-md p-4">
+                        <p class="text-gray-500 italic text-center py-4">No training sessions recorded yet.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
         <!-- Recording Section -->
         <section id="recording" class="py-16 bg-gray-50">
             <div class="container mx-auto px-4">

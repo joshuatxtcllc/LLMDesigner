@@ -202,6 +202,50 @@ app.post('/api/upload-recording', upload.single('recording'), async (req, res) =
   }
 });
 
+/**
+ * Submit training data with design decisions and annotations
+ * POST /api/training-data
+ */
+app.post('/api/training-data', express.json(), async (req, res) => {
+  try {
+    const trainingSession = req.body;
+    
+    if (!trainingSession || !trainingSession.id) {
+      return res.status(400).json({ error: 'Invalid training session data' });
+    }
+    
+    // Ensure directories exist
+    const trainDataDir = path.join(__dirname, 'data', 'training');
+    if (!fs.existsSync(trainDataDir)) {
+      fs.mkdirSync(trainDataDir, { recursive: true });
+    }
+    
+    // Save the training data to a JSON file
+    const filename = `session_${trainingSession.id}.json`;
+    const filePath = path.join(trainDataDir, filename);
+    
+    fs.writeFileSync(filePath, JSON.stringify(trainingSession, null, 2));
+    
+    console.log('Training data saved:', filename);
+    
+    // Process the data for AI training
+    // This would be expanded in a production environment
+    processTrainingData(trainingSession);
+    
+    res.json({
+      success: true,
+      message: 'Training data submitted successfully',
+      sessionId: trainingSession.id
+    });
+  } catch (error) {
+    console.error('Error processing training data:', error);
+    res.status(500).json({
+      error: 'Failed to process training data',
+      details: error.message
+    });
+  }
+});
+
 // Root route
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
@@ -298,6 +342,91 @@ function extractRecommendationDetail(text, optionType, detailType) {
     console.error(`Error extracting ${detailType} for ${optionType} option:`, error);
     return '';
   }
+}
+
+/**
+ * Process training data for AI model training
+ * @param {Object} trainingSession - The training session data
+ */
+function processTrainingData(trainingSession) {
+  try {
+    // In a production environment, this function would:
+    // 1. Format the data for the specific AI model being trained
+    // 2. Extract feature vectors from the artwork
+    // 3. Correlate design choices with artwork features
+    // 4. Feed the processed data into a training pipeline
+    
+    // For demo purposes, we'll create a simplified feature vector
+    const features = {
+      sessionId: trainingSession.id,
+      timestamp: trainingSession.timestamp,
+      artworkFeatures: extractArtworkFeatures(trainingSession.artworkData),
+      designDecisions: formatDesignDecisions(trainingSession.designChoices),
+      designRationale: trainingSession.annotations.map(a => a.text).join(' ')
+    };
+    
+    // Save the processed features
+    const featuresDir = path.join(__dirname, 'data', 'features');
+    if (!fs.existsSync(featuresDir)) {
+      fs.mkdirSync(featuresDir, { recursive: true });
+    }
+    
+    const featuresPath = path.join(featuresDir, `features_${trainingSession.id}.json`);
+    fs.writeFileSync(featuresPath, JSON.stringify(features, null, 2));
+    
+    console.log('Training features extracted and saved:', featuresPath);
+    
+    // In a real implementation, you would then send this data to your LLM training pipeline
+  } catch (error) {
+    console.error('Error processing training features:', error);
+  }
+}
+
+/**
+ * Extract features from artwork data
+ * @param {Object} artworkData - The artwork data
+ * @returns {Object} - Extracted features
+ */
+function extractArtworkFeatures(artworkData) {
+  // This is a placeholder for more sophisticated image analysis
+  // In a real application, you might use computer vision APIs or pre-trained models
+  
+  return {
+    medium: artworkData.medium || 'unknown',
+    dimensions: {
+      width: artworkData.width || 0,
+      height: artworkData.height || 0
+    },
+    hasPreview: !!artworkData.previewUrl,
+    notes: artworkData.specialNotes || ''
+  };
+}
+
+/**
+ * Format design decisions for model training
+ * @param {Array} designChoices - The raw design choices
+ * @returns {Object} - Formatted design decisions
+ */
+function formatDesignDecisions(designChoices) {
+  // Group design choices by category
+  const decisions = {};
+  
+  designChoices.forEach(choice => {
+    if (!decisions[choice.category]) {
+      decisions[choice.category] = {};
+    }
+    
+    if (!decisions[choice.category][choice.subcategory]) {
+      decisions[choice.category][choice.subcategory] = [];
+    }
+    
+    decisions[choice.category][choice.subcategory].push({
+      value: choice.value,
+      timestamp: choice.timestamp
+    });
+  });
+  
+  return decisions;
 }
 
 // Start the server
