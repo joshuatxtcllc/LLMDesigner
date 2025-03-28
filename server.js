@@ -17,7 +17,7 @@ dotenv.config();
 
 // Set up Express app
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -25,6 +25,12 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static('public'));
 app.use(express.static(path.join(__dirname, 'client/build')));
+
+// Ensure uploads directory exists
+const fs = require('fs');
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads');
+}
 
 // Configure file upload
 const storage = multer.diskStorage({
