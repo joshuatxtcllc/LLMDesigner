@@ -123,6 +123,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('height', height);
                 formData.append('specialNotes', specialNotes);
 
+                // Set a timeout to handle stuck requests
+                const analysisTimeout = setTimeout(() => {
+                    submitButton.innerHTML = originalButtonText;
+                    submitButton.disabled = false;
+                    const errorDisplay = document.createElement('div');
+                    errorDisplay.className = 'bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4';
+                    errorDisplay.innerHTML = `
+                        <strong class="font-bold">Analysis taking too long!</strong>
+                        <span class="block sm:inline">Using mock data for demonstration purposes.</span>
+                    `;
+                    document.getElementById('results').innerHTML = '';
+                    document.getElementById('results').appendChild(errorDisplay);
+                    displayMockResults();
+                }, 20000); // 20 seconds timeout
+
                 // Send to server
                 const response = await fetch('/api/analyze', {
                     method: 'POST',
@@ -135,6 +150,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error(errorData.error || 'Error analyzing artwork');
                 }
 
+                // Clear the timeout if we get a response
+                clearTimeout(analysisTimeout);
+
                 // Handle the response
                 const data = await response.json();
 
@@ -146,13 +164,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Show a more detailed error message
                 const errorDisplay = document.createElement('div');
                 errorDisplay.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4';
-                
+
                 // Check if it's an API key error
                 let errorMessage = error.message || 'An error occurred while processing your artwork';
                 if (errorMessage.includes('API key') || errorMessage.includes('authentication') || errorMessage.includes('401')) {
                     errorMessage = 'OpenAI API key error: Please ask the administrator to add a valid OpenAI API key with access to GPT-4 Vision API in the Replit Secrets tool.';
                 }
-                
+
                 errorDisplay.innerHTML = `
                     <strong class="font-bold">Error!</strong>
                     <span class="block sm:inline">${errorMessage}</span>
@@ -647,5 +665,15 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error('Error uploading recording:', error);
         }
+    }
+
+    // Placeholder for mock data display function.  Replace with actual implementation.
+    function displayMockResults() {
+        // Implement your mock data display logic here
+        console.log("Displaying mock results");
+        //Example:  Create a div and add some placeholder data.
+        const mockResultsDiv = document.createElement('div');
+        mockResultsDiv.innerHTML = "Mock analysis complete.  See console for details.";
+        document.getElementById('results').appendChild(mockResultsDiv);
     }
 });
