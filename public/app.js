@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Check if it's an API key error
                 let errorMessage = error.message || 'An error occurred while processing your artwork';
                 if (errorMessage.includes('API key') || errorMessage.includes('authentication') || errorMessage.includes('401')) {
-                    errorMessage = 'OpenAI API key error: Please make sure you have set a valid API key in the .env file with access to GPT-4 Vision API.';
+                    errorMessage = 'OpenAI API key error: Please ask the administrator to add a valid OpenAI API key with access to GPT-4 Vision API in the Replit Secrets tool.';
                 }
                 
                 errorDisplay.innerHTML = `

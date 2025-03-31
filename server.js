@@ -197,9 +197,12 @@ app.post('/api/analyze', imageUpload.single('artwork'), async (req, res) => {
     // Call OpenAI API for artwork analysis and recommendations
     // Validate API key before making the request
     if (!openaiApiKey || openaiApiKey === 'your-real-openai-api-key-here' || openaiApiKey.startsWith('sk-dummy')) {
-      throw new Error('Invalid OpenAI API key. Please set a valid API key in the .env file.');
+      console.log('Invalid OpenAI API key detected. Current key:', 
+        openaiApiKey ? (openaiApiKey.substring(0, 3) + '...' + openaiApiKey.substring(openaiApiKey.length - 3)) : 'undefined');
+      throw new Error('Invalid OpenAI API key. Please add a valid API key in the Secrets tool under OPENAI_API_KEY.');
     }
     
+    console.log("Attempting to call OpenAI API with validated key...");
     const response = await openai.chat.completions.create({
       model: "gpt-4-vision-preview",
       messages: [
