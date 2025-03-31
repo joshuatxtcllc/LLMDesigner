@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="./assets/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#3a1f8f">
 </head>
 <body class="bg-gray-50 font-sans">
     <header class="bg-white shadow-sm">
@@ -35,53 +39,60 @@
 
     <main>
         <!-- Hero Section -->
-        <section class="bg-gradient-to-r from-indigo-900 to-blue-800 text-white py-16">
-            <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-8 md:mb-0">
-                    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4">Expert Framing Design, Powered by AI</h1>
-                    <p class="text-xl mb-8">25 years of professional framing expertise at your fingertips. Upload your artwork and get custom framing recommendations in seconds.</p>
+        <section class="py-20 hero-gradient text-white relative overflow-hidden">
+            <div class="container mx-auto px-4 flex flex-col md:flex-row items-center relative z-10">
+                <div class="md:w-1/2 mb-12 md:mb-0 animate-fadeIn">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">Expert Framing Design, Powered by AI</h1>
+                    <p class="text-xl md:text-2xl mb-10 text-gray-100">25 years of professional framing expertise at your fingertips. Upload your artwork and get custom framing recommendations in seconds.</p>
                     <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                        <a href="#upload" class="btn-primary">Upload Artwork</a>
-                        <a href="#how-it-works" class="btn-secondary">Learn More</a>
+                        <a href="#upload" class="btn-primary text-lg px-8 py-4">Upload Artwork</a>
+                        <a href="#how-it-works" class="btn-secondary text-lg">Learn More</a>
                     </div>
                 </div>
-                <div class="md:w-1/2">
-                    <img src="./assets/hero-image.jpg" alt="Beautifully framed artwork" class="rounded-lg shadow-xl">
+                <div class="md:w-1/2 animate-slideUp">
+                    <div class="relative">
+                        <img src="./assets/hero-image.jpg" alt="Beautifully framed artwork" class="rounded-2xl shadow-2xl img-hero">
+                        <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-accent-color rounded-full opacity-20 blur-xl"></div>
+                        <div class="absolute -top-6 -left-6 w-32 h-32 bg-primary-color rounded-full opacity-20 blur-xl"></div>
+                    </div>
                 </div>
             </div>
+            <div class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-purple-500 opacity-10"></div>
+            <div class="absolute bottom-0 left-0 w-2/3 h-1/2 bg-gradient-to-t from-indigo-900 opacity-10"></div>
         </section>
 
         <!-- Features Section -->
-        <section id="how-it-works" class="py-16 bg-white">
+        <section id="how-it-works" class="py-24 bg-white">
             <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold text-center mb-12">How Our AI Assistant Works</h2>
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="feature-card">
-                        <div class="icon-wrapper bg-blue-100 text-blue-600">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 section-heading">How Our AI Assistant Works</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-16">Our advanced AI combines design principles with practical framing expertise to create your perfect frame.</p>
+                <div class="grid md:grid-cols-3 gap-10">
+                    <div class="feature-card group">
+                        <div class="icon-wrapper bg-blue-50 text-blue-600 group-hover:scale-110 transition-transform">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold mb-2">1. Upload Your Artwork</h3>
-                        <p class="text-gray-600">Simply upload a photo of your artwork. Our AI will analyze its style, colors, medium, and other key characteristics.</p>
+                        <h3 class="text-2xl font-semibold mb-3">1. Upload Your Artwork</h3>
+                        <p class="text-gray-600 text-lg">Simply upload a photo of your artwork. Our AI will analyze its style, colors, medium, and other key characteristics.</p>
                     </div>
-                    <div class="feature-card">
-                        <div class="icon-wrapper bg-indigo-100 text-indigo-600">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <div class="feature-card group">
+                        <div class="icon-wrapper bg-purple-50 text-purple-600 group-hover:scale-110 transition-transform">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold mb-2">2. Get Expert Recommendations</h3>
-                        <p class="text-gray-600">Our AI applies 25 years of professional framing expertise to suggest the perfect framing solutions for your piece.</p>
+                        <h3 class="text-2xl font-semibold mb-3">2. Get Expert Recommendations</h3>
+                        <p class="text-gray-600 text-lg">Our AI applies 25 years of professional framing expertise to suggest the perfect framing solutions for your piece.</p>
                     </div>
-                    <div class="feature-card">
-                        <div class="icon-wrapper bg-green-100 text-green-600">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <div class="feature-card group">
+                        <div class="icon-wrapper bg-green-50 text-green-600 group-hover:scale-110 transition-transform">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold mb-2">3. Visualize & Order</h3>
-                        <p class="text-gray-600">Preview how your artwork will look in different framing options, then place your order or book an in-person consultation.</p>
+                        <h3 class="text-2xl font-semibold mb-3">3. Visualize & Order</h3>
+                        <p class="text-gray-600 text-lg">Preview how your artwork will look in different framing options, then place your order or book an in-person consultation.</p>
                     </div>
                 </div>
             </div>
