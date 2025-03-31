@@ -195,6 +195,11 @@ app.post('/api/analyze', imageUpload.single('artwork'), async (req, res) => {
     const systemPrompt = require('./data/systemPrompt.json').prompt;
 
     // Call OpenAI API for artwork analysis and recommendations
+    // Validate API key before making the request
+    if (!openaiApiKey || openaiApiKey === 'your-real-openai-api-key-here' || openaiApiKey.startsWith('sk-dummy')) {
+      throw new Error('Invalid OpenAI API key. Please set a valid API key in the .env file.');
+    }
+    
     const response = await openai.chat.completions.create({
       model: "gpt-4-vision-preview",
       messages: [

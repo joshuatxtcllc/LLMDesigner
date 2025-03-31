@@ -146,9 +146,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Show a more detailed error message
                 const errorDisplay = document.createElement('div');
                 errorDisplay.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4';
+                
+                // Check if it's an API key error
+                let errorMessage = error.message || 'An error occurred while processing your artwork';
+                if (errorMessage.includes('API key') || errorMessage.includes('authentication') || errorMessage.includes('401')) {
+                    errorMessage = 'OpenAI API key error: Please make sure you have set a valid API key in the .env file with access to GPT-4 Vision API.';
+                }
+                
                 errorDisplay.innerHTML = `
                     <strong class="font-bold">Error!</strong>
-                    <span class="block sm:inline">${error.message || 'An error occurred while processing your artwork'}</span>
+                    <span class="block sm:inline">${errorMessage}</span>
                 `;
 
                 const resultSection = document.getElementById('results');
