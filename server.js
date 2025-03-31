@@ -92,7 +92,8 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({
+// Configure file upload for images
+const imageUpload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
   fileFilter: (req, file, cb) => {
@@ -101,6 +102,12 @@ const upload = multer({
     }
     cb(null, true);
   }
+});
+
+// Configure file upload for recordings (no mimetype restriction)
+const recordingUpload = multer({
+  storage,
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
 });
 
 // Configure OpenAI with key from Supabase
@@ -137,7 +144,10 @@ const openai = new OpenAI({
     const key = await getOpenAIKey();
     if (key) {
       openaiApiKey = key;
-      openai.apiKey = key;
+      // Create a new OpenAI instance with the updated key
+      openai = new OpenAI({
+        apiKey: key
+      });
       console.log('OpenAI API key updated from Supabase');
     }
   } catch (error) {
@@ -151,7 +161,7 @@ const openai = new OpenAI({
  * Analyze artwork image and provide framing recommendations
  * POST /api/analyze
  */
-app.post('/api/analyze', upload.single('artwork'), async (req, res) => {
+app.post('/api/analyze', imageUpload.single('artwork'), async (req, res) => {
   try {
     // Check if file exists
     if (!req.file) {
@@ -163,7 +173,10 @@ app.post('/api/analyze', upload.single('artwork'), async (req, res) => {
       const key = await getOpenAIKey();
       if (key) {
         openaiApiKey = key;
-        openai.apiKey = key;
+        // Create a new OpenAI instance with the updated key
+        openai = new OpenAI({
+          apiKey: key
+        });
       }
     } catch (error) {
       console.error('Failed to refresh OpenAI API key:', error);
@@ -257,7 +270,7 @@ app.post('/api/contact', express.json(), async (req, res) => {
  * Upload recording of design process
  * POST /api/upload-recording
  */
-app.post('/api/upload-recording', upload.single('recording'), async (req, res) => {
+app.post('/api/upload-recording', recordingUpload.single('recording'), async (req, res) => {
   try {
     // Check if file exists
     if (!req.file) {
@@ -570,8 +583,8 @@ function formatDesignDecisions(designChoices) {
 }
 
 // Start the server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server running on 0.0.0.0:${port}`);
 });
 
 module.exports = app;
