@@ -90,10 +90,234 @@ document.addEventListener('DOMContentLoaded', function() {
     const artworkForm = document.getElementById('artwork-form');
 
     if (artworkForm) {
-        artworkForm.addEventListener('submit', function(e) {
+        artworkForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            // Here you would normally send the data to the server
-            alert('Form submitted! This would normally send the data to the server for processing.');
+            
+            // Get the file and form data
+            const fileInput = document.getElementById('artwork-upload');
+            const artworkName = document.getElementById('artwork-name').value;
+            const medium = document.getElementById('artwork-medium').value;
+            const width = document.getElementById('artwork-width').value;
+            const height = document.getElementById('artwork-height').value;
+            const specialNotes = document.getElementById('special-notes').value;
+            
+            // Validate if an image is uploaded
+            if (!fileInput.files || !fileInput.files[0]) {
+                alert('Please upload an image of your artwork first.');
+                return;
+            }
+            
+            // Show loading state
+            const submitButton = artworkForm.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.innerHTML = 'Processing...';
+            submitButton.disabled = true;
+            
+            try {
+                // Create form data
+                const formData = new FormData();
+                formData.append('artwork', fileInput.files[0]);
+                formData.append('artworkName', artworkName);
+                formData.append('medium', medium);
+                formData.append('width', width);
+                formData.append('height', height);
+                formData.append('specialNotes', specialNotes);
+                
+                // Send to server
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Server error: ' + response.statusText);
+                }
+                
+                const result = await response.json();
+                
+                // Display the results
+                displayFramingRecommendations(result);
+                
+            } catch (error) {
+                console.error('Error processing artwork:', error);
+                alert('An error occurred while processing your artwork: ' + error.message);
+            } finally {
+                // Reset button state
+                submitButton.innerHTML = originalButtonText;
+                submitButton.disabled = false;
+            }
+        });
+    }
+    
+    // Function to display the framing recommendations
+    function displayFramingRecommendations(data) {
+        // Create results container if it doesn't exist
+        let resultsContainer = document.getElementById('framing-results');
+        if (!resultsContainer) {
+            resultsContainer = document.createElement('div');
+            resultsContainer.id = 'framing-results';
+            resultsContainer.className = 'max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mt-8';
+            document.querySelector('#upload .container').appendChild(resultsContainer);
+        }
+        
+        // Scroll to results
+        resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        
+        // Create the HTML content
+        let content = `
+            <h3 class="text-2xl font-bold mb-6">Your Framing Recommendations</h3>
+            
+            <div class="mb-6">
+                <h4 class="text-xl font-semibold mb-3">Artwork Analysis</h4>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-gray-50 rounded">
+                        <div class="font-medium text-gray-700">Medium and Type</div>
+                        <div>${data.analysis.medium || 'Not detected'}</div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded">
+                        <div class="font-medium text-gray-700">Color Palette</div>
+                        <div>${data.analysis.colors || 'Not detected'}</div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded">
+                        <div class="font-medium text-gray-700">Style and Subject</div>
+                        <div>${data.analysis.style || 'Not detected'}</div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded">
+                        <div class="font-medium text-gray-700">Conservation Needs</div>
+                        <div>${data.analysis.conservation || 'Standard conservation'}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <h4 class="text-xl font-semibold mb-3">Framing Options</h4>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Traditional Option -->
+                    <div class="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                        <div class="bg-amber-50 p-4 border-b">
+                            <h5 class="text-lg font-semibold text-amber-800">Traditional Option</h5>
+                        </div>
+                        <div class="p-4 space-y-3">
+                            <div>
+                                <div class="font-medium">Frame:</div>
+                                <div>${data.recommendations.traditional.frame || 'Not specified'}</div>
+                            </div>
+                            <div>
+                                <div class="font-medium">Mat:</div>
+                                <div>${data.recommendations.traditional.mat || 'Not specified'}</div>
+                            </div>
+                            <div>
+                                <div class="font-medium">Glass:</div>
+                                <div>${data.recommendations.traditional.glass || 'Not specified'}</div>
+                            </div>
+                            <div>
+                                <div class="font-medium">Mounting:</div>
+                                <div>${data.recommendations.traditional.mounting || 'Not specified'}</div>
+                            </div>
+                            <div>
+                                <div class="font-medium">Price Range:</div>
+                                <div>${data.recommendations.traditional.priceRange || 'Not specified'}</div>
+                            </div>
+                            <div class="pt-2">
+                                <div class="font-medium">Design Rationale:</div>
+                                <div class="text-gray-700">${data.recommendations.traditional.rationale || 'Not provided'}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contemporary Option -->
+                    <div class="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                        <div class="bg-indigo-50 p-4 border-b">
+                            <h5 class="text-lg font-semibold text-indigo-800">Contemporary Option</h5>
+                        </div>
+                        <div class="p-4 space-y-3">
+                            <div>
+                                <div class="font-medium">Frame:</div>
+                                <div>${data.recommendations.contemporary.frame || 'Not specified'}</div>
+                            </div>
+                            <div>
+                                <div class="font-medium">Mat:</div>
+                                <div>${data.recommendations.contemporary.mat || 'Not specified'}</div>
+                            </div>
+                            <div>
+                                <div class="font-medium">Glass:</div>
+                                <div>${data.recommendations.contemporary.glass || 'Not specified'}</div>
+                            </div>
+                            <div>
+                                <div class="font-medium">Mounting:</div>
+                                <div>${data.recommendations.contemporary.mounting || 'Not specified'}</div>
+                            </div>
+                            <div>
+                                <div class="font-medium">Price Range:</div>
+                                <div>${data.recommendations.contemporary.priceRange || 'Not specified'}</div>
+                            </div>
+                            <div class="pt-2">
+                                <div class="font-medium">Design Rationale:</div>
+                                <div class="text-gray-700">${data.recommendations.contemporary.rationale || 'Not provided'}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Budget Option -->
+                    <div class="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                        <div class="bg-green-50 p-4 border-b">
+                            <h5 class="text-lg font-semibold text-green-800">Budget Option</h5>
+                        </div>
+                        <div class="p-4 space-y-3">
+                            <div>
+                                <div class="font-medium">Frame:</div>
+                                <div>${data.recommendations.budget.frame || 'Not specified'}</div>
+                            </div>
+                            <div>
+                                <div class="font-medium">Mat:</div>
+                                <div>${data.recommendations.budget.mat || 'Not specified'}</div>
+                            </div>
+                            <div>
+                                <div class="font-medium">Glass:</div>
+                                <div>${data.recommendations.budget.glass || 'Not specified'}</div>
+                            </div>
+                            <div>
+                                <div class="font-medium">Mounting:</div>
+                                <div>${data.recommendations.budget.mounting || 'Not specified'}</div>
+                            </div>
+                            <div>
+                                <div class="font-medium">Price Range:</div>
+                                <div>${data.recommendations.budget.priceRange || 'Not specified'}</div>
+                            </div>
+                            <div class="pt-2">
+                                <div class="font-medium">Design Rationale:</div>
+                                <div class="text-gray-700">${data.recommendations.budget.rationale || 'Not provided'}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <button id="print-recommendations" class="btn-secondary mx-2">Print Recommendations</button>
+                <button id="new-artwork" class="btn-primary mx-2">Analyze Another Artwork</button>
+            </div>
+        `;
+        
+        // Set the HTML content
+        resultsContainer.innerHTML = content;
+        
+        // Add event listeners for buttons
+        document.getElementById('print-recommendations').addEventListener('click', function() {
+            window.print();
+        });
+        
+        document.getElementById('new-artwork').addEventListener('click', function() {
+            // Reset the form
+            artworkForm.reset();
+            document.getElementById('preview-container').classList.add('hidden');
+            document.querySelector('.upload-label').classList.remove('hidden');
+            
+            // Remove results
+            resultsContainer.remove();
+            
+            // Scroll to upload form
+            document.getElementById('upload').scrollIntoView({ behavior: 'smooth' });
         });
     }
 

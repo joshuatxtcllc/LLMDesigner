@@ -1,4 +1,36 @@
 
+/* Print styles */
+@media print {
+  header, footer, #upload .container > *:not(#framing-results), 
+  #framing-results button, nav, section:not(#upload) {
+    display: none !important;
+  }
+  
+  #framing-results {
+    box-shadow: none !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+  
+  body, html {
+    background: white !important;
+  }
+}
+
+#framing-results {
+  transition: all 0.3s ease;
+}
+
+#framing-results .grid > div {
+  transition: all 0.2s ease;
+}
+
+#framing-results .grid > div:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+
 /* Custom Styles for Jay's Frames Expert - Enhanced Modern UI */
 
 :root {
