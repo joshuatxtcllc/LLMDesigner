@@ -134,7 +134,7 @@ async function getOpenAIKey() {
 }
 
 // Initialize OpenAI with fallback key for now
-const openai = new OpenAI({
+let openai = new OpenAI({
   apiKey: openaiApiKey,
 });
 

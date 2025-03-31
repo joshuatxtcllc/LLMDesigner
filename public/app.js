@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (artworkForm) {
         artworkForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             // Get the file and form data
             const fileInput = document.getElementById('artwork-upload');
             const artworkName = document.getElementById('artwork-name').value;
@@ -100,19 +100,19 @@ document.addEventListener('DOMContentLoaded', function() {
             const width = document.getElementById('artwork-width').value;
             const height = document.getElementById('artwork-height').value;
             const specialNotes = document.getElementById('special-notes').value;
-            
+
             // Validate if an image is uploaded
             if (!fileInput.files || !fileInput.files[0]) {
                 alert('Please upload an image of your artwork first.');
                 return;
             }
-            
+
             // Show loading state
             const submitButton = artworkForm.querySelector('button[type="submit"]');
             const originalButtonText = submitButton.innerHTML;
             submitButton.innerHTML = 'Processing...';
             submitButton.disabled = true;
-            
+
             try {
                 // Create form data
                 const formData = new FormData();
@@ -122,25 +122,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('width', width);
                 formData.append('height', height);
                 formData.append('specialNotes', specialNotes);
-                
+
                 // Send to server
                 const response = await fetch('/api/analyze', {
                     method: 'POST',
                     body: formData
                 });
-                
+
+                // Check if response is ok
                 if (!response.ok) {
-                    throw new Error('Server error: ' + response.statusText);
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Error analyzing artwork');
                 }
-                
-                const result = await response.json();
-                
-                // Display the results
-                displayFramingRecommendations(result);
-                
+
+                // Handle the response
+                const data = await response.json();
+
+                // Display the recommendations
+                displayFramingRecommendations(data);
+
             } catch (error) {
-                console.error('Error processing artwork:', error);
-                alert('An error occurred while processing your artwork: ' + error.message);
+                console.error('Error:', error);
+                // Show a more detailed error message
+                const errorDisplay = document.createElement('div');
+                errorDisplay.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4';
+                errorDisplay.innerHTML = `
+                    <strong class="font-bold">Error!</strong>
+                    <span class="block sm:inline">${error.message || 'An error occurred while processing your artwork'}</span>
+                `;
+
+                const resultSection = document.getElementById('results');
+                if (resultSection) {
+                    resultSection.innerHTML = '';
+                    resultSection.appendChild(errorDisplay);
+                    resultSection.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert('Error: ' + (error.message || 'An error occurred while processing your artwork'));
+                }
             } finally {
                 // Reset button state
                 submitButton.innerHTML = originalButtonText;
@@ -148,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // Function to display the framing recommendations
     function displayFramingRecommendations(data) {
         // Create results container if it doesn't exist
@@ -159,14 +177,14 @@ document.addEventListener('DOMContentLoaded', function() {
             resultsContainer.className = 'max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mt-8';
             document.querySelector('#upload .container').appendChild(resultsContainer);
         }
-        
+
         // Scroll to results
         resultsContainer.scrollIntoView({ behavior: 'smooth' });
-        
+
         // Create the HTML content
         let content = `
             <h3 class="text-2xl font-bold mb-6">Your Framing Recommendations</h3>
-            
+
             <div class="mb-6">
                 <h4 class="text-xl font-semibold mb-3">Artwork Analysis</h4>
                 <div class="grid md:grid-cols-2 gap-4">
@@ -188,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             </div>
-            
+
             <div class="mb-6">
                 <h4 class="text-xl font-semibold mb-3">Framing Options</h4>
                 <div class="grid md:grid-cols-3 gap-6">
@@ -224,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Contemporary Option -->
                     <div class="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                         <div class="bg-indigo-50 p-4 border-b">
@@ -257,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Budget Option -->
                     <div class="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                         <div class="bg-green-50 p-4 border-b">
@@ -292,30 +310,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             </div>
-            
+
             <div class="text-center mt-8">
                 <button id="print-recommendations" class="btn-secondary mx-2">Print Recommendations</button>
                 <button id="new-artwork" class="btn-primary mx-2">Analyze Another Artwork</button>
             </div>
         `;
-        
+
         // Set the HTML content
         resultsContainer.innerHTML = content;
-        
+
         // Add event listeners for buttons
         document.getElementById('print-recommendations').addEventListener('click', function() {
             window.print();
         });
-        
+
         document.getElementById('new-artwork').addEventListener('click', function() {
             // Reset the form
             artworkForm.reset();
             document.getElementById('preview-container').classList.add('hidden');
             document.querySelector('.upload-label').classList.remove('hidden');
-            
+
             // Remove results
             resultsContainer.remove();
-            
+
             // Scroll to upload form
             document.getElementById('upload').scrollIntoView({ behavior: 'smooth' });
         });
