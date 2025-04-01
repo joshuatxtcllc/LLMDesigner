@@ -293,8 +293,7 @@ Price Range: $100-200
             }
           }]
         };
-      }
-      
+      } catch (error) {
       // If not a model issue, re-throw the error
       throw error;
     }
