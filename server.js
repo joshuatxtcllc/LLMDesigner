@@ -195,17 +195,24 @@ app.post('/api/analyze', imageUpload.single('artwork'), async (req, res) => {
     // Load the system prompt from file
     const systemPrompt = require('./data/systemPrompt.json').prompt;
 
-    // Call OpenAI API for artwork analysis and recommendations
     // Validate API key before making the request
-    if (!openaiApiKey || openaiApiKey === 'your-real-openai-api-key-here' || openaiApiKey.startsWith('sk-dummy')) {
-      console.log('Invalid OpenAI API key detected. Current key:', 
-        openaiApiKey ? (openaiApiKey.substring(0, 3) + '...' + openaiApiKey.substring(openaiApiKey.length - 3)) : 'undefined');
+    if (!openaiApiKey || 
+        openaiApiKey === 'your-real-openai-api-key-here' || 
+        openaiApiKey.startsWith('sk-dummy') ||
+        openaiApiKey === 'your_openai_api_key') {
+      console.log('Invalid OpenAI API key detected. Current key format:', 
+        openaiApiKey ? `${openaiApiKey.substring(0, 3)}...${openaiApiKey.substring(openaiApiKey.length - 3)}` : 'undefined');
 
       // Check if there's a key in the environment
       const envKey = process.env.OPENAI_API_KEY;
-      console.log('OpenAI key in environment:', envKey ? (envKey.substring(0, 3) + '...' + (envKey.length > 6 ? envKey.substring(envKey.length - 3) : '')) : 'undefined');
+      console.log('OpenAI key in environment format:', 
+        envKey ? `${envKey.substring(0, 3)}...${(envKey.length > 6 ? envKey.substring(envKey.length - 3) : '')}` : 'undefined');
 
-      throw new Error('Invalid OpenAI API key. Please add a valid API key in the Secrets tool under OPENAI_API_KEY.');
+      // For real-life use, we should send a proper error to the client
+      return res.status(500).json({
+        error: 'Configuration Error',
+        message: 'The OpenAI API key is not properly configured. Please contact the administrator.'
+      });
     }
 
     console.log("Attempting to call OpenAI API with validated key...");
