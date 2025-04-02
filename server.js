@@ -248,16 +248,16 @@ app.post('/api/analyze', imageUpload.single('artwork'), async (req, res) => {
       console.log("GPT-4 Vision Preview response received successfully");
       return response;
     } catch (error) {
-        console.error('Error with OpenAI API call:', error.message);
+      console.error('Error with OpenAI API call:', error.message);
 
-        // Always generate a mock response for testing/demo purposes if the API call fails
-        console.log("Generating mock AI response for testing purposes");
+      // Always generate a mock response for testing/demo purposes if the API call fails
+      console.log("Generating mock AI response for testing purposes");
 
-        // Create a mock response that matches OpenAI's format
-        return {
-          choices: [{
-            message: {
-              content: `
+      // Create a mock response that matches OpenAI's format
+      return {
+        choices: [{
+          message: {
+            content: `
 # Artwork Analysis
 
 Medium and Type: ${medium || "Oil painting"}
@@ -290,13 +290,10 @@ Glass: Regular glass with basic UV coating
 Mounting: Standard mounting methods
 Design Rationale: Affordable option that still provides a clean presentation
 Price Range: $100-200
-              `
-            }
-          }]
-        };
-      } catch (error) {
-      // If not a model issue, re-throw the error
-      throw error;
+            `
+          }
+        }]
+      };
     }
 
     // Process and structure the OpenAI response
