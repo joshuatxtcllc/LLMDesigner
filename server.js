@@ -121,7 +121,7 @@ async function getOpenAIKey() {
       .select('key_value')
       .eq('key_name', 'openai')
       .single();
-    
+
     if (error) throw error;
     if (data && data.key_value) {
       return data.key_value;
@@ -167,7 +167,7 @@ app.post('/api/analyze', imageUpload.single('artwork'), async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: 'No image uploaded' });
     }
-    
+
     // Refresh the OpenAI API key
     try {
       const key = await getOpenAIKey();
@@ -199,16 +199,16 @@ app.post('/api/analyze', imageUpload.single('artwork'), async (req, res) => {
     if (!openaiApiKey || openaiApiKey === 'your-real-openai-api-key-here' || openaiApiKey.startsWith('sk-dummy')) {
       console.log('Invalid OpenAI API key detected. Current key:', 
         openaiApiKey ? (openaiApiKey.substring(0, 3) + '...' + openaiApiKey.substring(openaiApiKey.length - 3)) : 'undefined');
-      
+
       // Check if there's a key in the environment
       const envKey = process.env.OPENAI_API_KEY;
       console.log('OpenAI key in environment:', envKey ? (envKey.substring(0, 3) + '...' + (envKey.length > 6 ? envKey.substring(envKey.length - 3) : '')) : 'undefined');
-      
+
       throw new Error('Invalid OpenAI API key. Please add a valid API key in the Secrets tool under OPENAI_API_KEY.');
     }
-    
+
     console.log("Attempting to call OpenAI API with validated key...");
-    
+
     try {
       // First try with GPT-4 Vision Preview which supports images
       console.log("Trying GPT-4 Vision Preview model...");
@@ -243,15 +243,15 @@ app.post('/api/analyze', imageUpload.single('artwork'), async (req, res) => {
         ],
         max_tokens: 1500
       });
-      
+
       console.log("GPT-4 Vision Preview response received successfully");
       return response;
     } catch (error) {
-      console.error("Error with OpenAI API call:", error.message);
-      
-      // Always generate a mock response for testing/demo purposes if the API call fails
-      console.log("Generating mock AI response for testing purposes");
-        
+        console.error('Error with OpenAI API call:', error.message);
+
+        // Always generate a mock response for testing/demo purposes if the API call fails
+        console.log("Generating mock AI response for testing purposes");
+
         // Create a mock response that matches OpenAI's format
         return {
           choices: [{
@@ -322,11 +322,11 @@ Price Range: $100-200
 app.post('/api/contact', express.json(), async (req, res) => {
   try {
     const { name, email, phone, message } = req.body;
-    
+
     // In a production app, you would send this to your email service or CRM
     // For demo purposes, we'll just log it and return success
     console.log('Contact form submission:', { name, email, phone, message });
-    
+
     res.json({ success: true, message: 'Contact form submitted successfully' });
   } catch (error) {
     console.error('Error submitting contact form:', error);
@@ -350,14 +350,14 @@ app.post('/api/upload-recording', recordingUpload.single('recording'), async (re
 
     // Get the uploaded file path
     const recordingPath = path.join(__dirname, req.file.path);
-    
+
     // In a production environment, you would:
     // 1. Store the recording metadata in a database
     // 2. Process it for AI training
     // 3. Potentially move it to cloud storage
-    
+
     console.log('Recording received:', req.file.filename);
-    
+
     // Return success response with recording details
     res.json({ 
       success: true, 
@@ -384,22 +384,22 @@ app.post('/api/upload-recording', recordingUpload.single('recording'), async (re
 app.post('/api/training-data', express.json(), async (req, res) => {
   try {
     const trainingSession = req.body;
-    
+
     if (!trainingSession || !trainingSession.id) {
       return res.status(400).json({ error: 'Invalid training session data' });
     }
-    
+
     // Save to local file system as backup
     const trainDataDir = path.join(__dirname, 'data', 'training');
     if (!fs.existsSync(trainDataDir)) {
       fs.mkdirSync(trainDataDir, { recursive: true });
     }
-    
+
     const filename = `session_${trainingSession.id}.json`;
     const filePath = path.join(trainDataDir, filename);
-    
+
     fs.writeFileSync(filePath, JSON.stringify(trainingSession, null, 2));
-    
+
     // Save training data to Supabase
     const { data, error } = await supabase
       .from('training_sessions')
@@ -413,17 +413,17 @@ app.post('/api/training-data', express.json(), async (req, res) => {
           recording_url: trainingSession.recordingUrl
         }
       ]);
-    
+
     if (error) {
       console.error('Supabase insert error:', error);
       // Continue with local processing even if Supabase fails
     } else {
       console.log('Training data saved to Supabase');
     }
-    
+
     // Process the data for AI training
     processTrainingData(trainingSession);
-    
+
     res.json({
       success: true,
       message: 'Training data submitted successfully',
@@ -446,7 +446,7 @@ app.post('/api/training-data', express.json(), async (req, res) => {
 app.post('/api/log-device-event', express.json(), async (req, res) => {
   try {
     const { event, deviceName, timestamp } = req.body;
-    
+
     // Log to Supabase
     const { data, error } = await supabase
       .from('device_events')
@@ -457,11 +457,11 @@ app.post('/api/log-device-event', express.json(), async (req, res) => {
           timestamp: timestamp || new Date().toISOString()
         }
       ]);
-    
+
     if (error) {
       console.error('Error logging device event to Supabase:', error);
     }
-    
+
     // Always return success to client even if Supabase fails
     res.json({ success: true });
   } catch (error) {
@@ -493,7 +493,7 @@ function processOpenAIResponse(responseText) {
   // This function would parse the response text and extract structured data
   // For a real implementation, you would use regex or other parsing methods
   // to extract specific sections of the response
-  
+
   // For demo purposes, we'll return a simplified structure
   return {
     analysis: {
@@ -579,7 +579,7 @@ function processTrainingData(trainingSession) {
     // 2. Extract feature vectors from the artwork
     // 3. Correlate design choices with artwork features
     // 4. Feed the processed data into a training pipeline
-    
+
     // For demo purposes, we'll create a simplified feature vector
     const features = {
       sessionId: trainingSession.id,
@@ -588,18 +588,18 @@ function processTrainingData(trainingSession) {
       designDecisions: formatDesignDecisions(trainingSession.designChoices),
       designRationale: trainingSession.annotations.map(a => a.text).join(' ')
     };
-    
+
     // Save the processed features
     const featuresDir = path.join(__dirname, 'data', 'features');
     if (!fs.existsSync(featuresDir)) {
       fs.mkdirSync(featuresDir, { recursive: true });
     }
-    
+
     const featuresPath = path.join(featuresDir, `features_${trainingSession.id}.json`);
     fs.writeFileSync(featuresPath, JSON.stringify(features, null, 2));
-    
+
     console.log('Training features extracted and saved:', featuresPath);
-    
+
     // In a real implementation, you would then send this data to your LLM training pipeline
   } catch (error) {
     console.error('Error processing training features:', error);
@@ -614,7 +614,7 @@ function processTrainingData(trainingSession) {
 function extractArtworkFeatures(artworkData) {
   // This is a placeholder for more sophisticated image analysis
   // In a real application, you might use computer vision APIs or pre-trained models
-  
+
   return {
     medium: artworkData.medium || 'unknown',
     dimensions: {
@@ -634,22 +634,22 @@ function extractArtworkFeatures(artworkData) {
 function formatDesignDecisions(designChoices) {
   // Group design choices by category
   const decisions = {};
-  
+
   designChoices.forEach(choice => {
     if (!decisions[choice.category]) {
       decisions[choice.category] = {};
     }
-    
+
     if (!decisions[choice.category][choice.subcategory]) {
       decisions[choice.category][choice.subcategory] = [];
     }
-    
+
     decisions[choice.category][choice.subcategory].push({
       value: choice.value,
       timestamp: choice.timestamp
     });
   });
-  
+
   return decisions;
 }
 
