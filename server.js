@@ -178,7 +178,8 @@ app.post('/api/analyze', imageUpload.single('artwork'), async (req, res) => {
           apiKey: key
         });
       }
-    } catch (error) {
+    } 
+    catch (error) {
       console.error('Failed to refresh OpenAI API key:', error);
       // Continue with existing key
     }
