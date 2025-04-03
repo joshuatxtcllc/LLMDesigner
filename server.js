@@ -664,3 +664,254 @@ app.listen(port, '0.0.0.0', () => {
 });
 
 module.exports = app;
+
+
+const express = require('express');
+const multer = require('multer');
+const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
+const { exec } = require('child_process');
+const dotenv = require('dotenv');
+const { createClient } = require('@supabase/supabase-js');
+
+// Load environment variables
+dotenv.config();
+
+// Initialize Supabase client
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+let supabase;
+
+try {
+  if (supabaseUrl && supabaseKey && 
+      supabaseUrl !== 'your_supabase_url' && 
+      supabaseKey !== 'your_supabase_anon_key' &&
+      supabaseUrl.startsWith('https://')) {
+    supabase = createClient(supabaseUrl, supabaseKey);
+    console.log('Supabase client initialized successfully');
+  } else {
+    console.warn('Missing or invalid Supabase credentials. Some features will be disabled.');
+    // Create a mock supabase client with no-op methods
+    supabase = {
+      from: () => ({ 
+        select: () => ({ 
+          eq: () => ({ 
+            single: () => Promise.resolve({ data: null, error: 'No Supabase connection' }) 
+          }) 
+        }),
+        insert: () => Promise.resolve({ data: null, error: 'No Supabase connection' })
+      })
+    };
+  }
+} catch (error) {
+  console.error('Failed to initialize Supabase client:', error);
+  // Create a mock supabase client
+  supabase = {
+    from: () => ({ 
+      select: () => ({ 
+        eq: () => ({ 
+          single: () => Promise.resolve({ data: null, error: 'No Supabase connection' }) 
+        }) 
+      }),
+      insert: () => Promise.resolve({ data: null, error: 'No Supabase connection' })
+    })
+  };
+}
+
+// Configure OpenAI with key from Supabase
+let openaiApiKey = process.env.OPENAI_API_KEY; // Fallback to env var
+
+// Function to get OpenAI API key from Supabase
+async function getOpenAIKey() {
+  try {
+    const { data, error } = await supabase
+      .from('api_keys')
+      .select('key_value')
+      .eq('key_name', 'openai')
+      .single();
+
+    if (error) throw error;
+    if (data && data.key_value) {
+      return data.key_value;
+    }
+    return process.env.OPENAI_API_KEY; // Fallback
+  } catch (error) {
+    console.error('Error fetching OpenAI key from Supabase:', error);
+    return process.env.OPENAI_API_KEY; // Fallback
+  }
+}
+
+// Update OpenAI key on startup
+(async function() {
+  try {
+    const key = await getOpenAIKey();
+    if (key) {
+      openaiApiKey = key;
+      console.log('OpenAI API key updated from Supabase');
+    }
+  } catch (error) {
+    console.error('Failed to update OpenAI API key:', error);
+  }
+})();
+
+// Set up Express app
+const app = express();
+const port = process.env.PORT || 3000;
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, 'uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit
+});
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.static('public'));
+
+// Install MarkItDown if not already installed
+const setupMarkItDown = async () => {
+  return new Promise((resolve, reject) => {
+    exec('npm list markitdown', (error, stdout, stderr) => {
+      if (stdout.includes('markitdown')) {
+        console.log('MarkItDown is already installed');
+        resolve();
+      } else {
+        console.log('Installing MarkItDown...');
+        exec('npm install markitdown', (error, stdout, stderr) => {
+          if (error) {
+            console.error('Error installing MarkItDown:', error);
+            reject(error);
+          } else {
+            console.log('MarkItDown installed successfully');
+            resolve();
+          }
+        });
+      }
+    });
+  });
+};
+
+// Ensure MarkItDown is installed on startup
+setupMarkItDown().catch(console.error);
+
+// Create a directory for agent assets
+const agentAssetsDir = path.join(__dirname, 'agent_assets');
+if (!fs.existsSync(agentAssetsDir)) {
+  fs.mkdirSync(agentAssetsDir);
+}
+
+// Create a file with information about MarkItDown
+const markitdownInfoPath = path.join(agentAssetsDir, 'github_com_microsoft_markitdown.md');
+fs.writeFileSync(markitdownInfoPath, `# MarkItDown
+
+MarkItDown is a utility for converting various files to Markdown developed by Microsoft.
+
+## Supported File Types
+- PDF
+- PowerPoint
+- Word
+- Excel
+- Images (EXIF metadata and OCR)
+- Audio (EXIF metadata and speech transcription)
+- HTML
+- Text-based formats (CSV, JSON, XML)
+- ZIP files (iterates over contents)
+
+## GitHub Repository
+https://github.com/microsoft/markitdown
+
+## Usage
+MarkItDown can be used to convert various file formats to Markdown for purposes like indexing, text analysis, etc.
+`);
+
+// Define the conversion API endpoint
+app.post('/api/convert', upload.array('files'), async (req, res) => {
+  try {
+    // Check if files were uploaded
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: 'No files uploaded' });
+    }
+
+    // Process each file
+    const results = await Promise.all(req.files.map(async (file) => {
+      const inputFile = file.path;
+      const outputFile = path.join(path.dirname(inputFile), path.basename(inputFile) + '.md');
+
+      // Use markitdown for conversion
+      await new Promise((resolve, reject) => {
+        const command = `npx markitdown "${inputFile}" -o "${outputFile}"`;
+        exec(command, (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error converting file ${file.originalname}:`, error);
+            reject(error);
+          } else {
+            console.log(`Successfully converted ${file.originalname}`);
+            resolve();
+          }
+        });
+      });
+
+      // Read the output markdown file
+      let markdown = '';
+      try {
+        if (fs.existsSync(outputFile)) {
+          markdown = fs.readFileSync(outputFile, 'utf8');
+        } else {
+          markdown = `# Conversion Notice\n\nThe file "${file.originalname}" could not be converted to Markdown. This could be due to file format limitations or empty content.`;
+        }
+      } catch (readError) {
+        console.error(`Error reading output file for ${file.originalname}:`, readError);
+        markdown = `# Error\n\nThere was an error converting "${file.originalname}" to Markdown.`;
+      }
+
+      // Clean up the temporary files
+      try {
+        fs.unlinkSync(inputFile);
+        if (fs.existsSync(outputFile)) {
+          fs.unlinkSync(outputFile);
+        }
+      } catch (cleanupError) {
+        console.error('Error cleaning up temporary files:', cleanupError);
+      }
+
+      return {
+        filename: file.originalname,
+        markdown: markdown
+      };
+    }));
+
+    // Return the conversion results
+    if (results.length === 1) {
+      res.json({
+        filename: results[0].filename,
+        markdown: results[0].markdown
+      });
+    } else {
+      res.json({ results });
+    }
+
+  } catch (error) {
+    console.error('Error in file conversion:', error);
+    res.status(500).json({ error: 'File conversion failed', details: error.message });
+  }
+});
+
+// Start the server
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server running on 0.0.0.0:${port}`);
+});

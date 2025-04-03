@@ -478,9 +478,9 @@ document.addEventListener('DOMContentLoaded', function() {
     async function setupCamera() {
         try {
             // Request camera access
-            recordingStream = await navigator.mediaDevices.getUserMedia({ 
-                video: true, 
-                audio: true 
+            recordingStream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: true
             });
 
             // Display the camera stream
@@ -675,5 +675,192 @@ document.addEventListener('DOMContentLoaded', function() {
         const mockResultsDiv = document.createElement('div');
         mockResultsDiv.innerHTML = "Mock analysis complete.  See console for details.";
         document.getElementById('results').appendChild(mockResultsDiv);
+    }
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const dropArea = document.getElementById('drop-area');
+    const fileInput = document.getElementById('fileInput');
+    const loading = document.getElementById('loading');
+    const results = document.getElementById('results');
+    const resultContainer = document.getElementById('result-container');
+
+    // Prevent default behavior for drag events
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // Highlight drop area when file is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight() {
+        dropArea.classList.add('highlight');
+    }
+
+    function unhighlight() {
+        dropArea.classList.remove('highlight');
+    }
+
+    // Handle dropped files
+    dropArea.addEventListener('drop', handleDrop, false);
+    fileInput.addEventListener('change', handleFiles, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles({ target: { files } });
+    }
+
+    function handleFiles(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+            uploadFiles(files);
+        }
+    }
+
+    function uploadFiles(files) {
+        // Show loading animation
+        loading.classList.remove('hidden');
+        results.classList.add('hidden');
+        resultContainer.innerHTML = '';
+
+        const formData = new FormData();
+
+        // Append all files to the form data
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i]);
+        }
+
+        // Send files to server for conversion
+        fetch('/api/convert', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayResults(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            displayError(error.message);
+        })
+        .finally(() => {
+            loading.classList.add('hidden');
+        });
+    }
+
+    function displayResults(data) {
+        resultContainer.innerHTML = '';
+
+        if (data.results && data.results.length > 0) {
+            // If multiple files were converted
+            data.results.forEach(result => {
+                const resultItem = createResultItem(result);
+                resultContainer.appendChild(resultItem);
+            });
+        } else if (data.markdown) {
+            // If a single file was converted
+            const result = {
+                filename: data.filename || 'Converted File',
+                markdown: data.markdown
+            };
+            const resultItem = createResultItem(result);
+            resultContainer.appendChild(resultItem);
+        } else {
+            displayError('No conversion results returned');
+            return;
+        }
+
+        results.classList.remove('hidden');
+    }
+
+    function createResultItem(result) {
+        const resultItem = document.createElement('div');
+        resultItem.className = 'result-item';
+
+        const resultHeader = document.createElement('div');
+        resultHeader.className = 'result-header';
+
+        const resultTitle = document.createElement('div');
+        resultTitle.className = 'result-title';
+        resultTitle.textContent = result.filename;
+
+        const resultActions = document.createElement('div');
+        resultActions.className = 'result-actions';
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'btn copy-btn';
+        copyBtn.textContent = 'Copy';
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(result.markdown)
+                .then(() => {
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Could not copy text: ', err);
+                });
+        });
+
+        const downloadBtn = document.createElement('button');
+        downloadBtn.className = 'btn download-btn';
+        downloadBtn.textContent = 'Download';
+        downloadBtn.addEventListener('click', () => {
+            const filename = result.filename.replace(/\.[^/.]+$/, '') + '.md';
+            const blob = new Blob([result.markdown], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        resultActions.appendChild(copyBtn);
+        resultActions.appendChild(downloadBtn);
+
+        resultHeader.appendChild(resultTitle);
+        resultHeader.appendChild(resultActions);
+
+        const markdownContent = document.createElement('pre');
+        markdownContent.className = 'markdown-content';
+        markdownContent.textContent = result.markdown;
+
+        resultItem.appendChild(resultHeader);
+        resultItem.appendChild(markdownContent);
+
+        return resultItem;
+    }
+
+    function displayError(message) {
+        resultContainer.innerHTML = `
+            <div class="error-message">
+                <p>Error: ${message}</p>
+                <p>Please try again with a supported file type.</p>
+            </div>
+        `;
+        results.classList.remove('hidden');
     }
 });

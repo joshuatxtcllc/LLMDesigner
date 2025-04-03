@@ -19,7 +19,8 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "multer": "^1.4.5-lts.2",
-    "openai": "^4.91.0"
+    "openai": "^4.91.0",
+    "markitdown": "^1.0.1"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
