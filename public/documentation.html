@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation | Jay's Frames Expert</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-50 font-sans">
+    <header class="bg-white shadow-sm">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="./assets/logo.svg" alt="Jay's Frames Expert Logo" class="h-10 w-auto mr-3">
+                <span class="text-xl font-semibold text-indigo-900">Jay's Frames Expert</span>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="index.html" class="text-gray-700 hover:text-indigo-600">Home</a>
+                <a href="documentation.html" class="text-indigo-600 font-medium">Documentation</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">
+        <h1 class="text-3xl font-bold mb-8">Documentation</h1>
+        
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">Getting Started</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-4">Uploading Artwork</h3>
+                <p class="mb-4">To get framing recommendations for your artwork:</p>
+                <ol class="list-decimal pl-6 space-y-2 mb-6">
+                    <li>Navigate to the home page</li>
+                    <li>Click on "Upload Artwork" in the hero section</li>
+                    <li>Select an image file of your artwork</li>
+                    <li>Fill in the optional details (dimensions, medium, etc.)</li>
+                    <li>Click "Analyze Artwork"</li>
+                    <li>Wait for the AI to generate recommendations</li>
+                </ol>
+                
+                <h3 class="text-xl font-semibold mb-4">Understanding Recommendations</h3>
+                <p class="mb-4">The AI will provide three framing options:</p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li><strong>Traditional Option:</strong> Classic framing approach</li>
+                    <li><strong>Contemporary Option:</strong> Modern framing style</li>
+                    <li><strong>Budget Option:</strong> Cost-effective solution</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">API Documentation</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-4">Available Endpoints</h3>
+                
+                <div class="mb-6">
+                    <h4 class="font-bold">POST /api/analyze</h4>
+                    <p class="mb-2">Upload artwork for analysis</p>
+                    <p class="mb-2"><strong>Form Data:</strong></p>
+                    <ul class="list-disc pl-6 mb-2">
+                        <li>artwork: (file) Image of the artwork</li>
+                        <li>artworkName: (string) Optional name of the artwork</li>
+                        <li>medium: (string) Optional medium of the artwork</li>
+                        <li>width: (number) Optional width in inches</li>
+                        <li>height: (number) Optional height in inches</li>
+                        <li>specialNotes: (string) Optional special considerations</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-6">
+                    <h4 class="font-bold">POST /api/contact</h4>
+                    <p class="mb-2">Submit contact form</p>
+                    <p class="mb-2"><strong>JSON Body:</strong></p>
+                    <ul class="list-disc pl-6 mb-2">
+                        <li>name: (string) Full name</li>
+                        <li>email: (string) Email address</li>
+                        <li>phone: (string) Optional phone number</li>
+                        <li>message: (string) Contact message</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div>
+            <h2 class="text-2xl font-bold mb-4">Training Mode</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-4">Training the AI</h3>
+                <p class="mb-4">For administrators who want to improve the AI with their expertise:</p>
+                <ol class="list-disc pl-6 space-y-2">
+                    <li>Navigate to the Training section</li>
+                    <li>Click "Start Training Session"</li>
+                    <li>Upload an artwork and make framing decisions</li>
+                    <li>Add annotations explaining your choices</li>
+                    <li>Click "Stop Training" when finished</li>
+                    <li>Your design process will be saved to improve future recommendations</li>
+                </ol>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-indigo-900 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-xl font-semibold mb-4">Jay's Frames Expert</h3>
+                    <p class="text-indigo-200">AI-powered custom framing design assistant</p>
+                </div>
+            </div>
+            <div class="mt-8 text-center text-indigo-200 text-sm">
+                &copy; 2023 Jay's Frames Expert. All rights reserved.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
