@@ -28,6 +28,15 @@ mode = "sequential"
 task = "shell.exec"
 args = "node server.js"
 
+[[workflows.workflow]]
+name = "Setup DB"
+author = 27546771
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node create_tables_sql.js"
+
 [[ports]]
 localPort = 3000
 externalPort = 80
