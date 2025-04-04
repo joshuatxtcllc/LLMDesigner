@@ -12,6 +12,8 @@ const path = require('path');
 const dotenv = require('dotenv');
 const OpenAI = require('openai');
 const { createClient } = require('@supabase/supabase-js');
+const fs = require('fs');
+const { exec } = require('child_process');
 
 // Load environment variables
 dotenv.config();
@@ -69,7 +71,6 @@ app.use(express.static('public'));
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 // Ensure uploads directory exists
-const fs = require('fs');
 if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
@@ -189,7 +190,7 @@ app.post('/api/analyze', imageUpload.single('artwork'), async (req, res) => {
 
     // Convert image to base64 for OpenAI API
     const imagePath = path.join(__dirname, req.file.path);
-    const imageBuffer = require('fs').readFileSync(imagePath);
+    const imageBuffer = fs.readFileSync(imagePath);
     const base64Image = imageBuffer.toString('base64');
 
     // Load the system prompt from file
@@ -217,10 +218,11 @@ app.post('/api/analyze', imageUpload.single('artwork'), async (req, res) => {
 
     console.log("Attempting to call OpenAI API with validated key...");
 
+    let response;
     try {
       // First try with GPT-4 Vision Preview which supports images
       console.log("Trying GPT-4 Vision Preview model...");
-      const response = await openai.chat.completions.create({
+      response = await openai.chat.completions.create({
         model: "gpt-4-vision-preview",
         messages: [
           {
@@ -253,7 +255,6 @@ app.post('/api/analyze', imageUpload.single('artwork'), async (req, res) => {
       });
 
       console.log("GPT-4 Vision Preview response received successfully");
-      return response;
     } catch (error) {
       console.error('Error with OpenAI API call:', error.message);
 
@@ -261,7 +262,7 @@ app.post('/api/analyze', imageUpload.single('artwork'), async (req, res) => {
       console.log("Generating mock AI response for testing purposes");
 
       // Create a mock response that matches OpenAI's format
-      return {
+      response = {
         choices: [{
           message: {
             content: `
@@ -307,7 +308,7 @@ Price Range: $100-200
     const framingRecommendations = processOpenAIResponse(response.choices[0].message.content);
 
     // Delete the uploaded file to save space
-    require('fs').unlinkSync(imagePath);
+    fs.unlinkSync(imagePath);
 
     // Return the framing recommendations
     res.json(framingRecommendations);
@@ -472,6 +473,78 @@ app.post('/api/log-device-event', express.json(), async (req, res) => {
   } catch (error) {
     console.error('Error logging device event:', error);
     res.status(500).json({ error: 'Failed to log device event' });
+  }
+});
+
+// Define the conversion API endpoint
+app.post('/api/convert', upload.array('files'), async (req, res) => {
+  try {
+    // Check if files were uploaded
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: 'No files uploaded' });
+    }
+
+    // Process each file
+    const results = await Promise.all(req.files.map(async (file) => {
+      const inputFile = file.path;
+      const outputFile = path.join(path.dirname(inputFile), path.basename(inputFile) + '.md');
+
+      // Use markitdown for conversion
+      await new Promise((resolve, reject) => {
+        const command = `npx markitdown "${inputFile}" -o "${outputFile}"`;
+        exec(command, (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error converting file ${file.originalname}:`, error);
+            reject(error);
+          } else {
+            console.log(`Successfully converted ${file.originalname}`);
+            resolve();
+          }
+        });
+      });
+
+      // Read the output markdown file
+      let markdown = '';
+      try {
+        if (fs.existsSync(outputFile)) {
+          markdown = fs.readFileSync(outputFile, 'utf8');
+        } else {
+          markdown = `# Conversion Notice\n\nThe file "${file.originalname}" could not be converted to Markdown. This could be due to file format limitations or empty content.`;
+        }
+      } catch (readError) {
+        console.error(`Error reading output file for ${file.originalname}:`, readError);
+        markdown = `# Error\n\nThere was an error converting "${file.originalname}" to Markdown.`;
+      }
+
+      // Clean up the temporary files
+      try {
+        fs.unlinkSync(inputFile);
+        if (fs.existsSync(outputFile)) {
+          fs.unlinkSync(outputFile);
+        }
+      } catch (cleanupError) {
+        console.error('Error cleaning up temporary files:', cleanupError);
+      }
+
+      return {
+        filename: file.originalname,
+        markdown: markdown
+      };
+    }));
+
+    // Return the conversion results
+    if (results.length === 1) {
+      res.json({
+        filename: results[0].filename,
+        markdown: results[0].markdown
+      });
+    } else {
+      res.json({ results });
+    }
+
+  } catch (error) {
+    console.error('Error in file conversion:', error);
+    res.status(500).json({ error: 'File conversion failed', details: error.message });
   }
 });
 
@@ -658,131 +731,6 @@ function formatDesignDecisions(designChoices) {
   return decisions;
 }
 
-// Start the server
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Server running on 0.0.0.0:${port}`);
-});
-
-module.exports = app;
-
-
-const express = require('express');
-const multer = require('multer');
-const cors = require('cors');
-const path = require('path');
-const fs = require('fs');
-const { exec } = require('child_process');
-const dotenv = require('dotenv');
-const { createClient } = require('@supabase/supabase-js');
-
-// Load environment variables
-dotenv.config();
-
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
-let supabase;
-
-try {
-  if (supabaseUrl && supabaseKey && 
-      supabaseUrl !== 'your_supabase_url' && 
-      supabaseKey !== 'your_supabase_anon_key' &&
-      supabaseUrl.startsWith('https://')) {
-    supabase = createClient(supabaseUrl, supabaseKey);
-    console.log('Supabase client initialized successfully');
-  } else {
-    console.warn('Missing or invalid Supabase credentials. Some features will be disabled.');
-    // Create a mock supabase client with no-op methods
-    supabase = {
-      from: () => ({ 
-        select: () => ({ 
-          eq: () => ({ 
-            single: () => Promise.resolve({ data: null, error: 'No Supabase connection' }) 
-          }) 
-        }),
-        insert: () => Promise.resolve({ data: null, error: 'No Supabase connection' })
-      })
-    };
-  }
-} catch (error) {
-  console.error('Failed to initialize Supabase client:', error);
-  // Create a mock supabase client
-  supabase = {
-    from: () => ({ 
-      select: () => ({ 
-        eq: () => ({ 
-          single: () => Promise.resolve({ data: null, error: 'No Supabase connection' }) 
-        }) 
-      }),
-      insert: () => Promise.resolve({ data: null, error: 'No Supabase connection' })
-    })
-  };
-}
-
-// Configure OpenAI with key from Supabase
-let openaiApiKey = process.env.OPENAI_API_KEY; // Fallback to env var
-
-// Function to get OpenAI API key from Supabase
-async function getOpenAIKey() {
-  try {
-    const { data, error } = await supabase
-      .from('api_keys')
-      .select('key_value')
-      .eq('key_name', 'openai')
-      .single();
-
-    if (error) throw error;
-    if (data && data.key_value) {
-      return data.key_value;
-    }
-    return process.env.OPENAI_API_KEY; // Fallback
-  } catch (error) {
-    console.error('Error fetching OpenAI key from Supabase:', error);
-    return process.env.OPENAI_API_KEY; // Fallback
-  }
-}
-
-// Update OpenAI key on startup
-(async function() {
-  try {
-    const key = await getOpenAIKey();
-    if (key) {
-      openaiApiKey = key;
-      console.log('OpenAI API key updated from Supabase');
-    }
-  } catch (error) {
-    console.error('Failed to update OpenAI API key:', error);
-  }
-})();
-
-// Set up Express app
-const app = express();
-const port = process.env.PORT || 3000;
-
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadDir = path.join(__dirname, 'uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
-});
-
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit
-});
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.static('public'));
-
 // Install MarkItDown if not already installed
 const setupMarkItDown = async () => {
   return new Promise((resolve, reject) => {
@@ -817,7 +765,8 @@ if (!fs.existsSync(agentAssetsDir)) {
 
 // Create a file with information about MarkItDown
 const markitdownInfoPath = path.join(agentAssetsDir, 'github_com_microsoft_markitdown.md');
-fs.writeFileSync(markitdownInfoPath, `# MarkItDown
+if (!fs.existsSync(markitdownInfoPath)) {
+  fs.writeFileSync(markitdownInfoPath, `# MarkItDown
 
 MarkItDown is a utility for converting various files to Markdown developed by Microsoft.
 
@@ -838,80 +787,17 @@ https://github.com/microsoft/markitdown
 ## Usage
 MarkItDown can be used to convert various file formats to Markdown for purposes like indexing, text analysis, etc.
 `);
+}
 
-// Define the conversion API endpoint
-app.post('/api/convert', upload.array('files'), async (req, res) => {
-  try {
-    // Check if files were uploaded
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ error: 'No files uploaded' });
-    }
-
-    // Process each file
-    const results = await Promise.all(req.files.map(async (file) => {
-      const inputFile = file.path;
-      const outputFile = path.join(path.dirname(inputFile), path.basename(inputFile) + '.md');
-
-      // Use markitdown for conversion
-      await new Promise((resolve, reject) => {
-        const command = `npx markitdown "${inputFile}" -o "${outputFile}"`;
-        exec(command, (error, stdout, stderr) => {
-          if (error) {
-            console.error(`Error converting file ${file.originalname}:`, error);
-            reject(error);
-          } else {
-            console.log(`Successfully converted ${file.originalname}`);
-            resolve();
-          }
-        });
-      });
-
-      // Read the output markdown file
-      let markdown = '';
-      try {
-        if (fs.existsSync(outputFile)) {
-          markdown = fs.readFileSync(outputFile, 'utf8');
-        } else {
-          markdown = `# Conversion Notice\n\nThe file "${file.originalname}" could not be converted to Markdown. This could be due to file format limitations or empty content.`;
-        }
-      } catch (readError) {
-        console.error(`Error reading output file for ${file.originalname}:`, readError);
-        markdown = `# Error\n\nThere was an error converting "${file.originalname}" to Markdown.`;
-      }
-
-      // Clean up the temporary files
-      try {
-        fs.unlinkSync(inputFile);
-        if (fs.existsSync(outputFile)) {
-          fs.unlinkSync(outputFile);
-        }
-      } catch (cleanupError) {
-        console.error('Error cleaning up temporary files:', cleanupError);
-      }
-
-      return {
-        filename: file.originalname,
-        markdown: markdown
-      };
-    }));
-
-    // Return the conversion results
-    if (results.length === 1) {
-      res.json({
-        filename: results[0].filename,
-        markdown: results[0].markdown
-      });
-    } else {
-      res.json({ results });
-    }
-
-  } catch (error) {
-    console.error('Error in file conversion:', error);
-    res.status(500).json({ error: 'File conversion failed', details: error.message });
-  }
+// Configure multer for file uploads
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit
 });
 
 // Start the server
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running on 0.0.0.0:${port}`);
 });
+
+module.exports = app;
