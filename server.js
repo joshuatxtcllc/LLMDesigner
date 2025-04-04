@@ -731,6 +731,12 @@ function formatDesignDecisions(designChoices) {
   return decisions;
 }
 
+// Configure multer for file uploads
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit
+});
+
 // Install MarkItDown if not already installed
 const setupMarkItDown = async () => {
   return new Promise((resolve, reject) => {
@@ -788,12 +794,6 @@ https://github.com/microsoft/markitdown
 MarkItDown can be used to convert various file formats to Markdown for purposes like indexing, text analysis, etc.
 `);
 }
-
-// Configure multer for file uploads
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit
-});
 
 // Start the server
 app.listen(port, '0.0.0.0', () => {
