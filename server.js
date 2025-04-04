@@ -477,7 +477,7 @@ app.post('/api/log-device-event', express.json(), async (req, res) => {
 });
 
 // Define the conversion API endpoint
-app.post('/api/convert', upload.array('files'), async (req, res) => {
+app.post('/api/convert', multer(storage).array('files'), async (req, res) => {
   try {
     // Check if files were uploaded
     if (!req.files || req.files.length === 0) {
