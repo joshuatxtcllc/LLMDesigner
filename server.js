@@ -731,11 +731,7 @@ function formatDesignDecisions(designChoices) {
   return decisions;
 }
 
-// Configure multer for file uploads
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit
-});
+// Upload configuration is defined above
 
 // Install MarkItDown if not already installed
 const setupMarkItDown = async () => {
