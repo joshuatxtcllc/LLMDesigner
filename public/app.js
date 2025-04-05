@@ -213,7 +213,18 @@ document.addEventListener('DOMContentLoaded', function() {
             resultsContainer = document.createElement('div');
             resultsContainer.id = 'framing-results';
             resultsContainer.className = 'max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mt-8';
-            document.querySelector('#upload .container').appendChild(resultsContainer);
+            
+            // Find a valid parent element to append to
+            let parentContainer = document.querySelector('#upload .container');
+            if (!parentContainer) {
+                // If that selector doesn't exist, try finding a different parent
+                parentContainer = document.querySelector('#upload');
+                if (!parentContainer) {
+                    // If all else fails, append to body
+                    parentContainer = document.body;
+                }
+            }
+            parentContainer.appendChild(resultsContainer);
         }
 
         // Scroll to results
