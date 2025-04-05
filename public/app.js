@@ -122,6 +122,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('width', width);
                 formData.append('height', height);
                 formData.append('specialNotes', specialNotes);
+                
+                // Ensure results container exists
+                let resultsContainer = document.getElementById('results');
+                if (!resultsContainer) {
+                    resultsContainer = document.createElement('div');
+                    resultsContainer.id = 'results';
+                    resultsContainer.className = 'results-container';
+                    artworkForm.parentNode.appendChild(resultsContainer);
+                }
 
                 // Set a timeout to handle stuck requests
                 const analysisTimeout = setTimeout(() => {
@@ -133,8 +142,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <strong class="font-bold">Analysis taking too long!</strong>
                         <span class="block sm:inline">Using mock data for demonstration purposes.</span>
                     `;
-                    document.getElementById('results').innerHTML = '';
-                    document.getElementById('results').appendChild(errorDisplay);
+                    resultsContainer.innerHTML = '';
+                    resultsContainer.appendChild(errorDisplay);
                     displayMockResults();
                 }, 20000); // 20 seconds timeout
 
@@ -176,14 +185,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span class="block sm:inline">${errorMessage}</span>
                 `;
 
-                const resultSection = document.getElementById('results');
-                if (resultSection) {
-                    resultSection.innerHTML = '';
-                    resultSection.appendChild(errorDisplay);
-                    resultSection.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    alert('Error: ' + (error.message || 'An error occurred while processing your artwork'));
+                // Ensure results container exists
+                let resultSection = document.getElementById('results');
+                if (!resultSection) {
+                    resultSection = document.createElement('div');
+                    resultSection.id = 'results';
+                    resultSection.className = 'results-container';
+                    artworkForm.parentNode.appendChild(resultSection);
                 }
+                
+                resultSection.innerHTML = '';
+                resultSection.appendChild(errorDisplay);
+                resultSection.scrollIntoView({ behavior: 'smooth' });
             } finally {
                 // Reset button state
                 submitButton.innerHTML = originalButtonText;
@@ -667,14 +680,57 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Placeholder for mock data display function.  Replace with actual implementation.
+    // Mock data display function
     function displayMockResults() {
-        // Implement your mock data display logic here
         console.log("Displaying mock results");
-        //Example:  Create a div and add some placeholder data.
-        const mockResultsDiv = document.createElement('div');
-        mockResultsDiv.innerHTML = "Mock analysis complete.  See console for details.";
-        document.getElementById('results').appendChild(mockResultsDiv);
+        
+        // Ensure results container exists
+        let resultsContainer = document.getElementById('results');
+        if (!resultsContainer) {
+            resultsContainer = document.createElement('div');
+            resultsContainer.id = 'results';
+            resultsContainer.className = 'results-container';
+            document.querySelector('#upload .container').appendChild(resultsContainer);
+        }
+        
+        // Create mock data
+        const mockData = {
+            analysis: {
+                medium: "Acrylic painting on canvas",
+                colors: "Blues, greens, and earth tones",
+                style: "Abstract landscape",
+                conservation: "Standard conservation"
+            },
+            recommendations: {
+                traditional: {
+                    frame: "Classic gold wood frame with ornate profile",
+                    mat: "Double mat with cream top mat, forest green bottom mat",
+                    glass: "Conservation clear glass with 99% UV protection",
+                    mounting: "Dry mounted to acid-free foam board",
+                    rationale: "The traditional gold frame creates a timeless presentation that enhances the artwork's natural colors",
+                    priceRange: "$150-250"
+                },
+                contemporary: {
+                    frame: "Slim black metal frame with clean lines",
+                    mat: "Single white mat with 3-inch border",
+                    glass: "Museum glass with anti-reflective coating",
+                    mounting: "Corner mounted with archival corners",
+                    rationale: "The minimalist approach allows the artwork to be the focal point while protecting it",
+                    priceRange: "$200-300"
+                },
+                budget: {
+                    frame: "Natural wood frame with simple profile",
+                    mat: "Single off-white mat",
+                    glass: "Standard clear glass",
+                    mounting: "Archival tape mounting",
+                    rationale: "This option provides good protection while keeping costs down",
+                    priceRange: "$75-125"
+                }
+            }
+        };
+        
+        // Display the mock recommendations
+        displayFramingRecommendations(mockData);
     }
 });
 
