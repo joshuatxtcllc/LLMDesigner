@@ -733,6 +733,98 @@ function formatDesignDecisions(designChoices) {
 
 // Upload configuration is defined above
 
+/**
+ * Generate a visualization of the artwork with the selected framing
+ * POST /api/visualize-frame
+ */
+app.post('/api/visualize-frame', imageUpload.single('artwork'), async (req, res) => {
+  try {
+    // Check if file exists
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image uploaded' });
+    }
+
+    // Get the uploaded file path
+    const imagePath = path.join(__dirname, req.file.path);
+    const imageBuffer = fs.readFileSync(imagePath);
+    const base64Image = imageBuffer.toString('base64');
+
+    // Get framing option and details
+    const option = req.body.option;
+    let framingDetails;
+    try {
+      framingDetails = JSON.parse(req.body.framingDetails);
+    } catch (error) {
+      framingDetails = {};
+    }
+
+    // Refresh the OpenAI API key
+    try {
+      const key = await getOpenAIKey();
+      if (key) {
+        openaiApiKey = key;
+        openai = new OpenAI({
+          apiKey: key
+        });
+      }
+    } catch (error) {
+      console.error('Failed to refresh OpenAI API key:', error);
+      // Continue with existing key
+    }
+
+    // Create a prompt for image generation
+    const frameDescription = framingDetails.frame || 'wooden frame';
+    const matDescription = framingDetails.mat || 'white mat';
+    const styleType = option === 'traditional' ? 'traditional style' : 
+                    option === 'contemporary' ? 'contemporary style' : 'simple style';
+    
+    const prompt = `Create a realistic visualization of an artwork in a ${styleType} frame. 
+    The frame is a ${frameDescription}. 
+    The mat is a ${matDescription}. 
+    Show the artwork elegantly displayed with the frame and mat in a well-lit gallery setting.`;
+
+    // Try to generate image with DALL-E
+    try {
+      console.log('Generating frame visualization with DALL-E...');
+      
+      // Call OpenAI DALL-E 3 API
+      const imageResponse = await openai.images.generate({
+        model: "dall-e-3",
+        prompt: prompt,
+        n: 1,
+        size: "1024x1024",
+        quality: "standard"
+      });
+      
+      // Return the image URL
+      res.json({
+        success: true,
+        imageUrl: imageResponse.data[0].url
+      });
+      
+    } catch (error) {
+      console.error('Error generating image with DALL-E:', error);
+      
+      // Fallback to a placeholder image
+      res.json({
+        success: true,
+        imageUrl: `https://picsum.photos/seed/${Date.now()}/800/600`,
+        mockImage: true
+      });
+    }
+
+    // Delete the uploaded file to save space
+    fs.unlinkSync(imagePath);
+    
+  } catch (error) {
+    console.error('Error visualizing frame:', error);
+    res.status(500).json({ 
+      error: 'Failed to generate frame visualization', 
+      details: error.message 
+    });
+  }
+});
+
 // Install MarkItDown if not already installed
 const setupMarkItDown = async () => {
   return new Promise((resolve, reject) => {

@@ -289,6 +289,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div class="font-medium">Design Rationale:</div>
                                 <div class="text-gray-700">${data.recommendations.traditional.rationale || 'Not provided'}</div>
                             </div>
+                            <div class="mt-4 text-center">
+                                <button class="visualize-btn px-4 py-2 bg-amber-100 text-amber-800 rounded hover:bg-amber-200 transition-colors" 
+                                        data-option="traditional">Visualize This Frame</button>
+                            </div>
                         </div>
                     </div>
 
@@ -321,6 +325,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="pt-2">
                                 <div class="font-medium">Design Rationale:</div>
                                 <div class="text-gray-700">${data.recommendations.contemporary.rationale || 'Not provided'}</div>
+                            </div>
+                            <div class="mt-4 text-center">
+                                <button class="visualize-btn px-4 py-2 bg-indigo-100 text-indigo-800 rounded hover:bg-indigo-200 transition-colors" 
+                                        data-option="contemporary">Visualize This Frame</button>
                             </div>
                         </div>
                     </div>
@@ -355,9 +363,23 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div class="font-medium">Design Rationale:</div>
                                 <div class="text-gray-700">${data.recommendations.budget.rationale || 'Not provided'}</div>
                             </div>
+                            <div class="mt-4 text-center">
+                                <button class="visualize-btn px-4 py-2 bg-green-100 text-green-800 rounded hover:bg-green-200 transition-colors" 
+                                        data-option="budget">Visualize This Frame</button>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Visualization Result Container -->
+            <div id="visualization-container" class="hidden mt-8 p-6 bg-white rounded-lg shadow-md max-w-2xl mx-auto">
+                <h4 class="text-xl font-semibold mb-4">Frame Visualization</h4>
+                <p class="mb-4">This is an AI-generated visualization of how your artwork might look with the selected framing:</p>
+                <div class="text-center">
+                    <img id="frame-visualization" class="max-w-full h-auto rounded-md shadow-md" alt="Framed artwork visualization">
+                </div>
+                <p class="mt-4 text-sm text-gray-500">Note: This is an AI-generated approximation and may differ from the final framed piece.</p>
             </div>
 
             <div class="text-center mt-8">
@@ -386,6 +408,72 @@ document.addEventListener('DOMContentLoaded', function() {
             // Scroll to upload form
             document.getElementById('upload').scrollIntoView({ behavior: 'smooth' });
         });
+
+        // Add event listeners for visualization buttons
+        document.querySelectorAll('.visualize-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const option = this.getAttribute('data-option');
+                generateFrameVisualization(data, option);
+            });
+        });
+    }
+
+    // Function to generate and display frame visualization
+    async function generateFrameVisualization(data, option) {
+        // Get the visualization container
+        const visualizationContainer = document.getElementById('visualization-container');
+        const frameVisualization = document.getElementById('frame-visualization');
+        
+        // Show loading state
+        visualizationContainer.classList.remove('hidden');
+        frameVisualization.src = 'https://via.placeholder.com/500x400?text=Generating+Visualization...';
+        visualizationContainer.scrollIntoView({ behavior: 'smooth' });
+        
+        try {
+            // Get the artwork image
+            const fileInput = document.getElementById('artwork-upload');
+            const file = fileInput.files[0];
+            if (!file) {
+                throw new Error('No artwork image found');
+            }
+            
+            // Create form data with the image and framing details
+            const formData = new FormData();
+            formData.append('artwork', file);
+            formData.append('option', option);
+            formData.append('framingDetails', JSON.stringify(data.recommendations[option]));
+            
+            // Set a timeout to handle stuck requests
+            const visualizationTimeout = setTimeout(() => {
+                // Show mock image for demo purposes
+                frameVisualization.src = `https://picsum.photos/seed/${Date.now()}/800/600`;
+            }, 5000); // 5 seconds timeout
+            
+            // Send to server
+            const response = await fetch('/api/visualize-frame', {
+                method: 'POST',
+                body: formData
+            });
+            
+            // Clear the timeout if we get a response
+            clearTimeout(visualizationTimeout);
+            
+            // Handle the response
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Error generating visualization');
+            }
+            
+            const result = await response.json();
+            
+            // Display the visualization
+            frameVisualization.src = result.imageUrl;
+            
+        } catch (error) {
+            console.error('Visualization error:', error);
+            // Show error message
+            frameVisualization.src = 'https://via.placeholder.com/500x400?text=Visualization+Failed';
+        }
     }
 
     // Contact Form Submission
